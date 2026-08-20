@@ -21,7 +21,7 @@ function isActive(href: string): boolean {
         NAV_LINKS.map((link) => (
           <a
             href={link.href}
-            class:list={["lift", "nav-link", isActive(link.href) && "active"]}
+            class:list={["nav-link", isActive(link.href) && "active"]}
           >
             {link.label}
           </a>
