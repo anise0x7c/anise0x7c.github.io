@@ -29,6 +29,35 @@
 - **Svelte 组件**：本仓库的 Svelte 岛屿按 Svelte 原生方式写 `<style>` 即可，Astro 不干预。
 - **⚠️ 生效前提**：Tailwind 的 CSS 必须在页面里被 import 才会生效。官方建议在布局组件里 import `global.css`，这样所有共享该布局的页面都能用 Tailwind 类。
 
+## 三·五、Tailwind 层级与令牌约定（本仓库特有，必读）
+
+### 覆盖模型：utilities 只对「分层」的组件生效
+
+Tailwind v4 的 cascade layers 顺序为 `theme < base < components < utilities`。本仓库中：
+
+- **ThemedButton** 的 `<style>` 写在 `@layer components` 里（见其源码注释），所以调用方传入的工具类（`rounded-lg` 等，位于 utilities 层）**可以正常覆盖**它。
+- **其余所有组件**（Astro scoped / Svelte `<style>`）的样式**不分层**。未分层样式在级联中排在所有 layer 之后，**永远压过 utilities 层** —— 给这些组件传工具类会被其 scoped 样式静默忽略。
+
+结论：想让某个组件接受调用方的工具类覆盖，就把它的样式放进 `@layer components`（照抄 ThemedButton 的写法）；否则不要给组件传期望生效的工具类。
+
+### 令牌命名：原始变量 vs 别名，两侧必须不同名
+
+`src/styles/themes.css` 采用两层命名：
+
+| 层 | 例子 | 定义位置 | 用途 |
+| --- | --- | --- | --- |
+| 原始运行时变量 | `--canvas`、`--text`、`--c-mint`、`--sh-card` | 未分层的 `:root` / `.dark` 块 | 按主题切换实际值 |
+| `@theme inline` 别名 | `--color-canvas`、`--shadow-card`、`--font-sans` | themes.css 的 `@theme inline` 块 | 组件里唯一该消费的名字 |
+
+**消费方只用别名**（`var(--color-*)`、`var(--shadow-*)`）；`inline` 让别名在使用点解析 var()，主题切换自然生效。
+
+⚠️ **别名与原始变量绝不能同名**。Tailwind 会把 `@theme` 块发射进 `@layer theme`；若写成 `--shadow-card: var(--shadow-card)`，theme 层里就是一条自循环声明（无效），目前只是碰巧被未分层的 `:root`/`.dark` 压住才没出事 —— 一旦原始变量块被移进 layer 或改名不一致，全站阴影会静默失效。阴影因此用 `--sh-*` 前缀（仿照贴纸色的 `--c-*` 前缀）。
+
+### 其他已知代价（有意设计，改动前三思）
+
+- `global.css` 的 `@layer base` 里有 `*` 全元素颜色 transition（为了 light/dark 切换全站同步）。它意味着全站样式重算，且任何 `transition-*` 工具类会整体覆盖该规则。
+- 手写 `@media (min-width: 1024px)` / `(max-width: 640px)` 对应 v4 默认断点 `lg:` / `sm:`；若未来迁移到工具类断点，注意保持数值一致。
+
 ## 四、生产打包
 
 - CSS 按页分块 + 共享块；`< 4kB` 默认内联进 `<style>`。

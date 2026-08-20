@@ -62,10 +62,14 @@
   --color-peach: var(--c-peach);
   --color-berry: var(--c-berry);
 
-  --shadow-sticky: var(--shadow-sticky)
-  --shadow-card: var(--shadow-card)
-  --shadow-float: var(--shadow-float)
-  --shadow-lqdglass: var(--shadow-lqdglass)
+  /* Alias names must differ from the runtime vars (--sh-*): a same-name
+     alias emits `--shadow-x: var(--shadow-x)` into @layer theme — a circular
+     declaration that only works because the unlayered :root/.dark blocks
+     below happen to win the cascade. */
+  --shadow-sticky: var(--sh-sticky);
+  --shadow-card: var(--sh-card);
+  --shadow-float: var(--sh-float);
+  --shadow-lqdglass: var(--sh-lqdglass);
 }
 
 /* Light theme */
@@ -95,15 +99,15 @@
   --c-berry: #e85a8c;
 
   /* shadows(?inset, offset-x, offset-y, blur, ?spread, color) */
-  --shadow-sticky:
+  --sh-sticky:
     0 2px 4px rgba(120, 90, 50, 0.35);
-  --shadow-card:
+  --sh-card:
     0 12px 28px rgba(120, 90, 50, 0.1),
     0 4px 8px rgba(120, 90, 50, 0.2);
-  --shadow-float:
+  --sh-float:
     0 20px 35px rgba(120, 90, 50, 0.2),
     0 8px 16px rgba(120, 90, 50, 0.3);
-  --shadow-lqdglass:
+  --sh-lqdglass:
     inset 0 5px 20px rgba(255, 255, 255, 0.5),
     inset 0 -15px 30px rgba(255, 255, 255, 0.54);
 
@@ -137,15 +141,15 @@
   --c-berry: #f38ba8;
 
   /* shadows(?inset, offset-x, offset-y, blur, ?spread, color) */
-  --shadow-sticky:
+  --sh-sticky:
     0 2px 4px rgba(17, 17, 27, 0.8);
-  --shadow-card:
+  --sh-card:
     0 12px 28px rgba(17, 17, 27, 0.8),
     0 4px 8px rgba(17, 17, 27, 0.9);
-  --shadow-float:
+  --sh-float:
     0 20px 35px rgba(17, 17, 27, 0.7),
     0 8px 16px rgba(17, 17, 27, 0.9);
-  --shadow-lqdglass:
+  --sh-lqdglass:
     inset 0 5px 20px rgba(255, 255, 255, 0.08),
     inset 0 -15px 30px rgba(255, 255, 255, 0.1);
 
