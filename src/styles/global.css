@@ -33,7 +33,7 @@
        block that covers static layers below the root group during the
        transition. Keeping the canvas == paper colour makes the snapshot
        blend seamlessly with the real background. */
-    background-color: var(--color-canvas);
+    background-color: var(--color-base);
     color: var(--color-text);
     font-family: var(--font-sans);
     text-rendering: optimizeLegibility;

@@ -46,12 +46,14 @@ Tailwind v4 的 cascade layers 顺序为 `theme < base < components < utilities`
 
 | 层 | 例子 | 定义位置 | 用途 |
 | --- | --- | --- | --- |
-| 原始运行时变量 | `--canvas`、`--text`、`--c-mint`、`--sh-card` | 未分层的 `:root` / `.dark` 块 | 按主题切换实际值 |
-| `@theme inline` 别名 | `--color-canvas`、`--shadow-card`、`--font-sans` | themes.css 的 `@theme inline` 块 | 组件里唯一该消费的名字 |
+| 原始运行时变量 | `--base`、`--text`、`--mauve`、`--sh-card` | 未分层的 `:root` / `.dark` 块 | 按主题切换实际值 |
+| `@theme inline` 别名 | `--color-base`、`--shadow-card`、`--font-sans` | themes.css 的 `@theme inline` 块 | 组件里唯一该消费的名字 |
 
 **消费方只用别名**（`var(--color-*)`、`var(--shadow-*)`）；`inline` 让别名在使用点解析 var()，主题切换自然生效。
 
-⚠️ **别名与原始变量绝不能同名**。Tailwind 会把 `@theme` 块发射进 `@layer theme`；若写成 `--shadow-card: var(--shadow-card)`，theme 层里就是一条自循环声明（无效），目前只是碰巧被未分层的 `:root`/`.dark` 压住才没出事 —— 一旦原始变量块被移进 layer 或改名不一致，全站阴影会静默失效。阴影因此用 `--sh-*` 前缀（仿照贴纸色的 `--c-*` 前缀）。
+⚠️ **别名与原始变量绝不能同名**。Tailwind 会把 `@theme` 块发射进 `@layer theme`；若写成 `--shadow-card: var(--shadow-card)`，theme 层里就是一条自循环声明（无效），目前只是碰巧被未分层的 `:root`/`.dark` 压住才没出事 —— 一旦原始变量块被移进 layer 或改名不一致，全站阴影会静默失效。阴影因此用 `--sh-*` 前缀。
+
+调色盘为 [Catppuccin](https://catppuccin.com/palette)（亮色 Latte / 暗色 Mocha），26 色全部别名为 `--color-*`（如 `--color-surface0/1/2`、`--color-overlay0/1/2`、`--color-subtext0/1`、`--color-mauve` 等）。**`--color-accent*` 是独立于 Catppuccin 的品牌强调色**（亮 `#ff6b8d` / 暗 `#fac8dd` 及其派生 strong/soft/contrast），保留独立运行时变量，与 Catppuccin 调色盘互不干扰。
 
 ### 其他已知代价（有意设计，改动前三思）
 

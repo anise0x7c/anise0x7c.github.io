@@ -104,21 +104,13 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url);
 <script>
   import type { TransitionBeforeSwapEvent } from "astro:transitions/client";
 
-  // Context-aware page transitions: classify each navigation by route depth and
-  // tag the incoming <html> with data-vt-nav so CSS picks drill/back/sibling
-  // animations. The marker is transient — only consulted by ::view-transition-*
-  // rules during the animation; it lingers after the transition by design and is
-  // harmless (each navigation re-stamps a freshly fetched document). Bundled
-  // scripts run once; the listener stays alive across swaps.
-  const depth = (path: string): number =>
-    path.split("/").filter(Boolean).length;
-
+  // Bundled scripts run once; these listeners stay alive across swaps.
+  const VT_GLASS = "data-vt-glass";
+  document.addEventListener("astro:before-preparation", () => {
+    document.documentElement.setAttribute(VT_GLASS, "");
+  });
   document.addEventListener("astro:before-swap", (event) => {
     const e = event as TransitionBeforeSwapEvent;
-    const fd = depth(e.from.pathname);
-    const td = depth(e.to.pathname);
-    const nav = td > fd ? "drill" : td < fd ? "back" : "sibling";
-    e.newDocument.documentElement.dataset.vtNav = nav;
     // Keep dark mode across navigations: swapRootAttributes copies the
     // incoming <html>'s attributes, so stamp the class before the swap.
     // Otherwise the theme is lost → light body anchored by scrollTo's forced
@@ -126,15 +118,6 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url);
     if (document.documentElement.classList.contains("dark")) {
       e.newDocument.documentElement.classList.add("dark");
     }
-  });
-
-  
-  const VT_GLASS = "data-vt-glass";
-  document.addEventListener("astro:before-preparation", () => {
-    document.documentElement.setAttribute(VT_GLASS, "");
-  });
-  document.addEventListener("astro:before-swap", (event) => {
-    const e = event as TransitionBeforeSwapEvent;
     e.newDocument.documentElement.setAttribute(VT_GLASS, "");
     e.viewTransition?.finished.finally(() =>
       document.documentElement.removeAttribute(VT_GLASS),
@@ -164,7 +147,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url);
     top: 0;
     left: 0;
     right: 0;
-    height: var(--banner-h);
+    height: 65dvh;
     z-index: -1;
     pointer-events: none;
   }
@@ -174,7 +157,6 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url);
     width: 100%;
     height: 100%;
     object-fit: cover;
-    border-bottom: solid 15px #efeeeb;
     box-shadow: var(--shadow-sticky);
   }
 </style>

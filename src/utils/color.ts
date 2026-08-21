@@ -4,12 +4,12 @@
 // colour-stable across the site.
 
 const STICKER_VARS = [
-  "var(--color-berry)",
-  "var(--color-mint)",
+  "var(--color-red)",
+  "var(--color-green)",
   "var(--color-sky)",
-  "var(--color-grape)",
+  "var(--color-mauve)",
   "var(--color-peach)",
-  "var(--color-lemon)",
+  "var(--color-yellow)",
 ] as const;
 
 // FNV-1a + murmur-style final avalanche: plain multiplicative hashes (h*31+c,

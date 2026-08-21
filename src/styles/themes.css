@@ -36,31 +36,51 @@
 /*
   Semantic aliases: `inline` resolves the var() at use-site, so theme swaps
   just work. Consume only these names, never the raw values.
+
+  Colours follow Catppuccin (https://catppuccin.com/palette): light = Latte,
+  dark = Mocha. The full 26-colour palette is aliased here so utilities like
+  bg-base / bg-surface0 / text-subtext0 / bg-mauve exist for the whole
+  family, even where the site only consumes a subset today.
 */
 @theme inline {
-  --color-canvas: var(--canvas);
-  --color-surface: var(--surface);
-  --color-surface-sunk: var(--surface-sunk);
-  --color-surface-hover: var(--surface-hover);
+  --color-rosewater: var(--rosewater);
+  --color-flamingo: var(--flamingo);
+  --color-pink: var(--pink);
+  --color-mauve: var(--mauve);
+  --color-red: var(--red);
+  --color-maroon: var(--maroon);
+  --color-peach: var(--peach);
+  --color-yellow: var(--yellow);
+  --color-green: var(--green);
+  --color-teal: var(--teal);
+  --color-sky: var(--sky);
+  --color-sapphire: var(--sapphire);
+  --color-blue: var(--blue);
+  --color-lavender: var(--lavender);
 
   --color-text: var(--text);
-  --color-muted: var(--text-muted);
-  --color-subtle: var(--text-subtle);
+  --color-subtext1: var(--subtext1);
+  --color-subtext0: var(--subtext0);
 
+  --color-overlay2: var(--overlay2);
+  --color-overlay1: var(--overlay1);
+  --color-overlay0: var(--overlay0);
+
+  --color-surface2: var(--surface2);
+  --color-surface1: var(--surface1);
+  --color-surface0: var(--surface0);
+
+  --color-base: var(--base);
+  --color-mantle: var(--mantle);
+  --color-crust: var(--crust);
+
+  /* Independent site accent — deliberately NOT part of the Catppuccin
+     palette. Keeps its own runtime vars so the brand pink can be re-tuned
+     without touching Catppuccin colours (and vice versa). */
   --color-accent: var(--accent);
   --color-accent-strong: var(--accent-strong);
   --color-accent-contrast: var(--accent-contrast);
   --color-accent-soft: var(--accent-soft);
-
-  --color-border: var(--border);
-  --color-border-strong: var(--border-strong);
-
-  --color-mint: var(--c-mint);
-  --color-sky: var(--c-sky);
-  --color-lemon: var(--c-lemon);
-  --color-grape: var(--c-grape);
-  --color-peach: var(--c-peach);
-  --color-berry: var(--c-berry);
 
   /* Alias names must differ from the runtime vars (--sh-*): a same-name
      alias emits `--shadow-x: var(--shadow-x)` into @layer theme — a circular
@@ -72,79 +92,101 @@
   --shadow-lqdglass: var(--sh-lqdglass);
 }
 
-/* Light theme */
+/* Light theme — Catppuccin Latte */
 :root {
-  --canvas: #faf5ec;
-  --surface: #faf9f7;
-  --surface-sunk: #f3ece0;
-  --surface-hover: #f2eada;
+  --rosewater: #dc8a78;
+  --flamingo: #dd7878;
+  --pink: #ea76cb;
+  --mauve: #8839ef;
+  --red: #d20f39;
+  --maroon: #e64553;
+  --peach: #fe640b;
+  --yellow: #df8e1d;
+  --green: #40a02b;
+  --teal: #179299;
+  --sky: #04a5e5;
+  --sapphire: #209fb5;
+  --blue: #1e66f5;
+  --lavender: #7287fd;
 
-  --text: #322b23;
-  --text-muted: #6a5f52;
-  --text-subtle: #a89b8b;
+  --text: #4c4f69;
+  --subtext1: #5c5f77;
+  --subtext0: #6c6f85;
 
+  --overlay2: #7c7f93;
+  --overlay1: #8c8fa1;
+  --overlay0: #9ca0b0;
+
+  --surface2: #acb0be;
+  --surface1: #bcc0cc;
+  --surface0: #ccd0da;
+
+  --base: #eff1f5;
+  --mantle: #e6e9ef;
+  --crust: #dce0e8;
+
+  /* Independent brand accent (not Catppuccin) */
   --accent: #ff6b8d;
   --accent-strong: #ff7f9d;
   --accent-contrast: #faf9f7;
   --accent-soft: rgba(255, 107, 141, 0.14);
 
-  --border: #ccc1ad;
-  --border-strong: #b3a68f;
-
-  --c-mint: #34c9a3;
-  --c-sky: #4da9e6;
-  --c-lemon: #f5c24b;
-  --c-grape: #a982e8;
-  --c-peach: #ff9c73;
-  --c-berry: #e85a8c;
-
-  /* shadows(?inset, offset-x, offset-y, blur, ?spread, color) */
+  /* shadows(?inset, offset-x, offset-y, blur, ?spread, color) — tinted with
+     Latte text #4c4f69 */
   --sh-sticky:
-    0 2px 4px rgba(120, 90, 50, 0.35);
+    0 2px 4px rgba(76, 79, 105, 0.35);
   --sh-card:
-    0 12px 28px rgba(120, 90, 50, 0.1),
-    0 4px 8px rgba(120, 90, 50, 0.2);
+    0 12px 28px rgba(76, 79, 105, 0.1),
+    0 4px 8px rgba(76, 79, 105, 0.2);
   --sh-float:
-    0 20px 35px rgba(120, 90, 50, 0.2),
-    0 8px 16px rgba(120, 90, 50, 0.3);
+    0 20px 35px rgba(76, 79, 105, 0.2),
+    0 8px 16px rgba(76, 79, 105, 0.3);
   --sh-lqdglass:
     inset 0 5px 20px rgba(255, 255, 255, 0.5),
     inset 0 -15px 30px rgba(255, 255, 255, 0.54);
-
-  /* Fuwari-style site banner height: consumed by BaseLayout's .site-bg band
-     and by page content offsets that clear the banner. */
-  --banner-h: 41dvh;
-
-  color-scheme: light;
 }
 
-/* Dark theme */
+/* Dark theme — Catppuccin Mocha */
 .dark {
-  --canvas: #1e1e2e;
-  --surface: #313244;
-  --surface-sunk: #313244;
-  --surface-hover: #45475a;
+  --rosewater: #f5e0dc;
+  --flamingo: #f2cdcd;
+  --pink: #f5c2e7;
+  --mauve: #cba6f7;
+  --red: #f38ba8;
+  --maroon: #eba0ac;
+  --peach: #fab387;
+  --yellow: #f9e2af;
+  --green: #a6e3a1;
+  --teal: #94e2d5;
+  --sky: #89dceb;
+  --sapphire: #74c7ec;
+  --blue: #89b4fa;
+  --lavender: #b4befe;
 
   --text: #cdd6f4;
-  --text-muted: #bac2de;
-  --text-subtle: #a6adc8;
+  --subtext1: #bac2de;
+  --subtext0: #a6adc8;
 
+  --overlay2: #9399b2;
+  --overlay1: #7f849c;
+  --overlay0: #6c7086;
+
+  --surface2: #585b70;
+  --surface1: #45475a;
+  --surface0: #313244;
+
+  --base: #1e1e2e;
+  --mantle: #181825;
+  --crust: #11111b;
+
+  /* Independent brand accent (not Catppuccin) */
   --accent: #fac8dd;
   --accent-strong: #fad4e4;
   --accent-contrast: #3d1521;
   --accent-soft: rgba(255, 143, 171, 0.16);
 
-  --border: #6c7086;
-  --border-strong: #9399b2;
-
-  --c-mint: #a6e3a1;
-  --c-sky: #89dceb;
-  --c-lemon: #f9e2af;
-  --c-grape: #cba6f7;
-  --c-peach: #fab387;
-  --c-berry: #f38ba8;
-
-  /* shadows(?inset, offset-x, offset-y, blur, ?spread, color) */
+  /* shadows(?inset, offset-x, offset-y, blur, ?spread, color) — tinted with
+     Mocha crust #11111b */
   --sh-sticky:
     0 2px 4px rgba(17, 17, 27, 0.8);
   --sh-card:

@@ -274,8 +274,8 @@
     flex-direction: column;
     width: min(40rem, 100%);
     max-height: 70vh;
-    background: var(--color-surface);
-    border: 1px solid var(--color-border);
+    background: var(--color-surface0);
+    border: 1px solid var(--color-overlay0);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-float);
     overflow: hidden;
@@ -293,8 +293,8 @@
     align-items: center;
     gap: 0.6rem;
     padding: 0.85rem 1rem;
-    border-bottom: 1px solid var(--color-border);
-    color: var(--color-muted);
+    border-bottom: 1px solid var(--color-overlay0);
+    color: var(--color-subtext1);
   }
 
   .box input {
@@ -309,16 +309,16 @@
   }
 
   .box input::placeholder {
-    color: var(--color-subtle);
+    color: var(--color-subtext0);
   }
 
   .esc {
     flex-shrink: 0;
     padding: 0.15rem 0.5rem;
-    border: 1px solid var(--color-border);
+    border: 1px solid var(--color-overlay0);
     border-radius: var(--radius-sm);
-    background: var(--color-surface-sunk);
-    color: var(--color-subtle);
+    background: var(--color-mantle);
+    color: var(--color-subtext0);
     font-family: var(--font-mono);
     font-size: 0.72rem;
     line-height: 1.4;
@@ -327,7 +327,7 @@
 
   .esc:hover {
     color: var(--color-text);
-    border-color: var(--color-border-strong);
+    border-color: var(--color-overlay2);
   }
 
   .results {
@@ -339,16 +339,16 @@
     padding: 1.25rem 0.75rem;
     text-align: center;
     font-size: 0.9rem;
-    color: var(--color-subtle);
+    color: var(--color-subtext0);
   }
 
   .hint code {
     font-family: var(--font-mono);
     font-size: 0.85em;
-    background: var(--color-surface-sunk);
+    background: var(--color-mantle);
     padding: 0.1em 0.35em;
     border-radius: var(--radius-sm);
-    border: 1px solid var(--color-border);
+    border: 1px solid var(--color-overlay0);
   }
 
   .result {
@@ -361,7 +361,7 @@
 
   .result:hover,
   .result.active {
-    background: var(--color-surface-hover);
+    background: var(--color-surface1);
   }
 
   .result .title {
@@ -374,7 +374,7 @@
   .result .excerpt {
     font-size: 0.85rem;
     line-height: 1.55;
-    color: var(--color-muted);
+    color: var(--color-subtext1);
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
