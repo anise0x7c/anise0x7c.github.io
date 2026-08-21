@@ -149,6 +149,25 @@ html[data-vt-nav="back"]::view-transition-new(root) {
   z-index: 1;
 }
 
+/*
+  Site banner band (BaseLayout .site-banner) must never participate in
+  navigation animations. It is frozen AND stacked above the root group
+  (z-index 5, between root=1 and site-header=10): the root snapshot always
+  bakes an opaque canvas per css-view-transitions, so a static layer placed
+  *below* root would be covered by a solid block for the whole animation —
+  layers above it stay visible. Content slides under the band during the
+  transition, same visual metaphor as the frozen header pill above it.
+*/
+::view-transition-group(site-banner),
+::view-transition-old(site-banner),
+::view-transition-new(site-banner) {
+  animation: none;
+}
+
+::view-transition-group(site-banner) {
+  z-index: 5;
+}
+
 
 
 /* Search Overlay */

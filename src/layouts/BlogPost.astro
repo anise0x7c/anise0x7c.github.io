@@ -133,7 +133,8 @@ const hasToc = tocItems.length > 0;
   .post {
     max-width: var(--container-prose);
     margin-inline: auto;
-    padding: 2.5rem 1.25rem 4rem;
+    /* Start below the site-wide banner band (.site-bg in BaseLayout). */
+    padding: calc(var(--banner-h) + 1.5rem) 1.25rem 4rem;
   }
 
   /* On wide screens, give the article page a wider shell so the body + TOC

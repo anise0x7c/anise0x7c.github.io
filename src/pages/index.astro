@@ -4,15 +4,11 @@ import { SITE } from "../consts";
 import { getRecentPosts } from "../utils/posts";
 import PostCard from "../components/PostCard.astro";
 import ThemedButton from "../components/ThemedButton.astro";
-import { Image } from "astro:assets";
-
-import Background from "../assets/images/chasing-color-hrz.jpg"
 
 const recent = await getRecentPosts(6);
 ---
 
 <BaseLayout>
-  <Image src={Background} alt="" class="bg"/>
   <div class="components">
     <section class="hero">
       <p class="eyebrow">Hello there!</p>
@@ -64,17 +60,6 @@ const recent = await getRecentPosts(6);
     padding: 0 1.25rem;
   }
 
-  .bg {
-    position: fixed;
-    z-index: -1;
-    inset: 0;
-    width: 100%;
-    height: 41dvh;
-    object-fit: cover;
-    border-bottom: solid 15px #efeeeb;
-    box-shadow: var(--shadow-sticky);
-  }
-
   .hero {
     background-color: color-mix(in srgb, var(--color-surface) 55%, transparent);
     backdrop-filter: blur(10px) saturate(1.6) brightness(0.9);
@@ -91,7 +76,7 @@ const recent = await getRecentPosts(6);
   }
 
   .hero:hover {
-    transform: scale(1.03);
+    transform: scale(1.02);
   }
 
   /* Firefox drops backdrop-filter inside view-transition snapshots

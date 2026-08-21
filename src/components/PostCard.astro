@@ -74,7 +74,7 @@ const tagChips = tags.map((tag) => ({ tag, color: stickerColor(tag) }));
   }
 
   .card:hover {
-    transform:scale(1.03) translateY(-8px);
+    transform:scale(1.03);
     box-shadow: var(--shadow-float);
   }
 
@@ -83,7 +83,7 @@ const tagChips = tags.map((tag) => ({ tag, color: stickerColor(tag) }));
   }
 
   .card:active {
-    transform:scale(1) translateY(0);
+    transform:scale(1);
   }
 
   @supports (-moz-appearance: none) {

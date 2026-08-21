@@ -27,33 +27,18 @@
   }
 
   body {
-    /* Layer 1: solid paper colour (paints the canvas, avoids white flash).
-       Layer 2 (grid) lives on body::before — see below. */
+    /* The canvas MUST carry the paper colour. Per css-view-transitions, the
+       root snapshot always bakes in the canvas background as an opaque
+       image — a transparent body would make the snapshot a solid UA-white
+       block that covers static layers below the root group during the
+       transition. Keeping the canvas == paper colour makes the snapshot
+       blend seamlessly with the real background. */
     background-color: var(--color-canvas);
     color: var(--color-text);
     font-family: var(--font-sans);
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-  }
-
-  body::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    z-index: -1;
-    /* Layer 2: a faint square grid (graph-paper) derived from the ink
-       colour so it tracks both themes. Fixed => doesn't scroll. */
-    background-image: linear-gradient(
-        color-mix(in srgb, var(--color-text) 7%, transparent) 1px,
-        transparent 1px
-      ),
-      linear-gradient(
-        90deg,
-        color-mix(in srgb, var(--color-text) 7%, transparent) 1px,
-        transparent 1px
-      );
-    background-size: 4rem 4rem;
   }
 
   /*

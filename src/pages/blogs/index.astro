@@ -35,7 +35,8 @@ const posts = await getPublishedPosts();
   .container {
     max-width: var(--container-page);
     margin: 0 auto;
-    padding: 3rem 1.25rem 4rem;
+    /* Start below the site-wide banner band (.site-bg in BaseLayout). */
+    padding: calc(var(--banner-h) + 1.5rem) 1.25rem 4rem;
   }
 
   .page-head {

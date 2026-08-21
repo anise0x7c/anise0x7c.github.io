@@ -1,10 +1,11 @@
 ---
 import { ClientRouter } from "astro:transitions";
-import { Font } from "astro:assets";
+import { Font, Image } from "astro:assets";
 import "../styles/global.css";
 import { SITE } from "../consts";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
+import Background from "../assets/images/chasing-color-hrz.jpg";
 
 interface Props {
   title?: string;
@@ -73,6 +74,25 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url);
     </script>
   </head>
   <body>
+    <!-- Site-wide banner band (fuwari-style top strip). Frozen via
+         transition:animate="none" and stacked ABOVE the root group during
+         view transitions (see animations.css) — the root snapshot always
+         bakes an opaque canvas, so any static layer below it would be
+         hidden for the duration of the animation. -->
+    <div
+      class="site-banner"
+      transition:name="site-banner"
+      transition:animate="none"
+      aria-hidden="true"
+    >
+      <Image
+        src={Background}
+        alt=""
+        class="band"
+        loading="eager"
+        fetchpriority="high"
+      />
+    </div>
     <Header />
     <main>
       <slot />
@@ -129,5 +149,32 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url);
   main {
     display: block;
     min-height: calc(100vh - 3.75rem);
+  }
+</style>
+
+<style>
+  /*
+    The banner band only — paper colour stays on the canvas (body in
+    global.css) because the root VT snapshot bakes the canvas opaquely.
+    Height token: --banner-h (themes.css); freeze + z-index rules:
+    animations.css.
+  */
+  .site-banner {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: var(--banner-h);
+    z-index: -1;
+    pointer-events: none;
+  }
+
+  .band {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-bottom: solid 15px #efeeeb;
+    box-shadow: var(--shadow-sticky);
   }
 </style>

@@ -111,6 +111,10 @@
     inset 0 5px 20px rgba(255, 255, 255, 0.5),
     inset 0 -15px 30px rgba(255, 255, 255, 0.54);
 
+  /* Fuwari-style site banner height: consumed by BaseLayout's .site-bg band
+     and by page content offsets that clear the banner. */
+  --banner-h: 41dvh;
+
   color-scheme: light;
 }
 

@@ -20,7 +20,8 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
   }
 
   .temp {
-    margin: 5rem auto;
+    /* Start below the site-wide banner band (.site-bg in BaseLayout). */
+    margin: calc(var(--banner-h) + 3rem) auto;
   }
 
   .temp h1 {
