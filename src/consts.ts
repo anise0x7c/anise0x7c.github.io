@@ -1,14 +1,13 @@
 // Central place for site-wide, editor-editable constants.
 
 export const SITE = {
-  title: "80ml Spice Jar",
+  title: "80mlSpiceJar",
   description:
     "Personal Site/Blog",
   author: "80CentsAnise",
 } as const;
 
 export const NAV_LINKS = [
-  { href: "/", label: "Home" },
   { href: "/blogs", label: "Blog" },
   { href: "/docs", label: "Docs"}
 ] as const;

@@ -61,14 +61,6 @@ const classes = [
         color 0.4s var(--ease-spring);
     }
 
-    .btn:hover {
-      transform: translateY(-3px);
-    }
-
-    .btn:active {
-      transform: translateY(0);
-    }
-
     /* 伪边框:inset shadow 不占布局空间,
        也避开 Firefox 细边框动画的子像素渲染问题 */
     .btn--outline {
@@ -91,8 +83,7 @@ const classes = [
 
     .btn--flat:hover {
       color: var(--color-text);
-      background-color: var(--color-surface1);
-      box-shadow: inset 0 0 0 1px var(--color-overlay2);
+      background-color: color-mix(in srgb, var(--color-overlay2) 30%, transparent);
     }
 
     .btn--solid {

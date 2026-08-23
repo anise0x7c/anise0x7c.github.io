@@ -148,19 +148,29 @@ const isHome = Astro.url.pathname === "/";
   /*
     The banner band only — paper colour stays on the canvas (body in
     global.css). Height token: --banner-h / --banner-h-home (themes.css).
+
+    The band follows the page as it scrolls (sticky), but never leaves the
+    viewport entirely: `top` is pinned to -(H − 10dvh), so once the page has
+    scrolled H − 10dvh the band sticks with its bottom 10dvh still visible.
+    Because sticky keeps the element in flow, `margin-bottom` cancels its own
+    height so header/main keep their existing offsets unchanged.
+
     The height transition is the cross-page morph: the element persists
     across swup navigations, only its height animates (65dvh on home/desktop
-    ↔ 35dvh elsewhere).
+    ↔ 35dvh elsewhere). top/margin-bottom transition in lock-step so the
+    pinned geometry never jumps mid-morph.
   */
   .site-banner {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
+    position: sticky;
+    top: calc(10dvh - var(--banner-h-effective));
     height: var(--banner-h-effective);
+    margin-bottom: calc(-1 * var(--banner-h-effective));
     z-index: -1;
     pointer-events: none;
-    transition: height 0.4s var(--ease-enter);
+    transition:
+      height 0.4s var(--ease-enter),
+      top 0.4s var(--ease-enter),
+      margin-bottom 0.4s var(--ease-enter);
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -174,6 +184,6 @@ const isHome = Astro.url.pathname === "/";
     width: 100%;
     height: 100%;
     object-fit: cover;
-    box-shadow: var(--shadow-sticky);
+    object-position: 50% 90%; /* crop anchor */
   }
 </style>

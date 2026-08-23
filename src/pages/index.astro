@@ -62,7 +62,7 @@ const recent = await getRecentPosts(6);
        flips on navigation, nothing relayouts instantly; the hero glides
        with the shrinking/growing band instead of jumping. */
     margin: calc(var(--banner-h) - 15dvh) auto;
-    padding: 0 1.25rem;
+    padding: 0 1.5rem;
     /* Same params as .site-banner's height transition (BaseLayout) so the
        hero tracks the band edge exactly; translate is compositor-driven,
        no reflow of the article list below. */
@@ -83,22 +83,23 @@ const recent = await getRecentPosts(6);
   }
 
   .hero {
-    background-color: color-mix(in srgb, var(--color-base) 75%, transparent);
-    backdrop-filter: blur(5px) saturate(1.6);
-    -webkit-backdrop-filter: blur(5px) saturate(1.6);
+    background-color: color-mix(in srgb, var(--color-base) 60%, transparent);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     padding: 3rem;
-    margin-bottom: 6rem;
+    margin-bottom: 4rem;
     border-radius: var(--radius-3xl);
-    box-shadow: var(--shadow-card), var(--shadow-lqdglass);
+    box-shadow: var(--shadow-card);
 
     transition:
       transform 0.4s var(--ease-bounce),
-      box-shadow 0.4s var(--ease-bounce), 
+      box-shadow 0.4s var(--ease-spring), 
       background-color 0.4s var(--ease-spring);
   }
 
   .hero:hover {
     transform: scale(1.02);
+    box-shadow: var(--shadow-float);
   }
 
   .eyebrow {
@@ -135,14 +136,14 @@ const recent = await getRecentPosts(6);
   }
 
   .recent {
-    padding-bottom: 20rem;
+    padding-bottom: 90rem;
   }
 
   .section-head {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    margin-bottom: 1.5rem;
+    border-radius: var(--radius-pill);
+    padding: 1rem 2rem;
+    margin-bottom: 1rem;
+    background-color: var(--color-mantle);
   }
 
   .section-head h2 {
