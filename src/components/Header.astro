@@ -12,7 +12,7 @@ function isActive(href: string): boolean {
 }
 ---
 
-<header class="site-header" transition:name="site-header" transition:animate="none">
+<header class="site-header">
   <div class="header-inner">
     <a href="/" class="site-logo">{SITE.title}</a>
 
@@ -99,9 +99,10 @@ function isActive(href: string): boolean {
 
 
 <script>
-  // Bundled module scripts run only once. With view transitions the toggle
-  // button is a fresh DOM node after every navigation, so re-bind on each
-  // `astro:page-load` (which also fires on the initial load).
+  // Bundled module scripts execute once per full page load, and the header
+  // sits outside swup's swap container (<main>), so the toggle button DOM
+  // node persists across navigations — bind once, directly. No re-binding
+  // needed (that was only necessary when the whole <body> got replaced).
   const setupThemeToggle = () => {
     document
       .querySelector("[data-theme-toggle]")
@@ -114,12 +115,10 @@ function isActive(href: string): boolean {
         }
       });
   };
-  document.addEventListener("astro:page-load", setupThemeToggle);
+  setupThemeToggle();
 
-  // Hide-on-scroll: the listener is bound to `window` once because bundled
-  // module scripts run only once and `window` survives view-transition swaps;
-  // the header element itself is re-queried every frame since each swap
-  // replaces it with a fresh DOM node.
+  // Hide-on-scroll: the listener is bound to `window` once; the header
+  // element is re-queried every frame to avoid holding a stale reference.
   const HEADER_HIDE_THRESHOLD = 80;
   const HEADER_DEADZONE = 4;
   let headerLastY = window.scrollY;
@@ -148,6 +147,10 @@ function isActive(href: string): boolean {
     { passive: true },
   );
 
+  // Every swup navigation scrolls back to the top — recalibrate the
+  // baseline and un-hide the header. @swup/astro re-dispatches
+  // astro:page-load on page:view (not on the initial load, which needs no
+  // recalibration).
   document.addEventListener("astro:page-load", () => {
     headerLastY = window.scrollY;
     document.querySelector(".site-header")?.removeAttribute("data-hidden");

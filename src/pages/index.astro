@@ -56,8 +56,30 @@ const recent = await getRecentPosts(6);
 <style>
   .components {
     max-width: var(--container-page);
-    margin: 45dvh auto;
+    /* Base offset = regular band height − 20dvh overlap. The home-page
+       extra height is applied as an animated translate (below), mirroring
+       how the banner itself animates its height — so when body.is-home
+       flips on navigation, nothing relayouts instantly; the hero glides
+       with the shrinking/growing band instead of jumping. */
+    margin: calc(var(--banner-h) - 15dvh) auto;
     padding: 0 1.25rem;
+    /* Same params as .site-banner's height transition (BaseLayout) so the
+       hero tracks the band edge exactly; translate is compositor-driven,
+       no reflow of the article list below. */
+    transition: translate 0.4s var(--ease-enter);
+  }
+
+  @media (min-width: 1024px) {
+    body.is-home .components {
+      /* +30dvh on desktop home (65 − 35), matching --banner-h-home */
+      translate: 0 calc(var(--banner-h-home) - var(--banner-h));
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .components {
+      transition: none;
+    }
   }
 
   .hero {
@@ -65,8 +87,9 @@ const recent = await getRecentPosts(6);
     backdrop-filter: blur(5px) saturate(1.6);
     -webkit-backdrop-filter: blur(5px) saturate(1.6);
     padding: 3rem;
+    margin-bottom: 6rem;
     border-radius: var(--radius-3xl);
-    box-shadow: var(--shadow-card);
+    box-shadow: var(--shadow-card), var(--shadow-lqdglass);
 
     transition:
       transform 0.4s var(--ease-bounce),
@@ -74,39 +97,8 @@ const recent = await getRecentPosts(6);
       background-color 0.4s var(--ease-spring);
   }
 
-  .hero::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    pointer-events: none;
-    box-shadow: inset 0 0 0 1px var(--color-overlay0);
-    transition: box-shadow 0.4s var(--ease-spring);
-  }
-
   .hero:hover {
     transform: scale(1.02);
-  }
-
-  .card:hover::after {
-    box-shadow: var(--shadow-lqdglass);
-  }
-
-  /* Firefox drops backdrop-filter inside view-transition snapshots
-     (Bugzilla 1999295), so the glass card loses its blur for the whole
-     animation. Astro brackets every client-side navigation with
-     <html data-astro-transition="…">: set before startViewTransition
-     (baked into the OLD snapshot), carried across the swap
-     (non-overridable attr, baked into the NEW snapshot), removed when
-     the transition finishes. Firefox applies :active-view-transition
-     too late for the old snapshot — which is why leaving / still showed
-     the broken glass. Do NOT add a transition on background-color —
-     the gradient would be captured mid-way and the bug would resurface. */
-  @supports (-moz-appearance: none) {
-    html[data-astro-transition] .hero {
-      transition: none;
-      background-color: var(--color-base);
-    }
   }
 
   .eyebrow {

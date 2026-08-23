@@ -90,9 +90,19 @@ const hasToc = tocItems.length > 0;
 </BaseLayout>
 
 <script>
-  // Re-run on every client-side navigation (also fires on first load) so the
-  // TOC observer is attached to the freshly swapped document.
+  // TOC scroll-spy. This module script is only present on post pages, where
+  // it runs after DOM parse on full loads. On swup navigations the head is
+  // synced with the incoming page's <script> tags — a module script added
+  // mid-session executes once and registers the astro:page-load listener
+  // (@swup/astro re-dispatches it on page:view), re-attaching the observer
+  // to each freshly swapped document. The disconnect guard makes repeated
+  // invocations idempotent.
+  let observer: IntersectionObserver | null = null;
   const setupToc = () => {
+    if (observer) {
+      observer.disconnect();
+      observer = null;
+    }
     const toc = document.querySelector<HTMLElement>(".toc");
     if (!toc) return;
     const links = Array.from(toc.querySelectorAll<HTMLAnchorElement>("a"));
@@ -109,7 +119,7 @@ const hasToc = tocItems.length > 0;
     let activeLink: HTMLAnchorElement | null = links[0] ?? null;
     if (activeLink) activeLink.classList.add("active");
 
-    const observer = new IntersectionObserver(
+    const obs = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
           if (entry.isIntersecting) {
@@ -124,8 +134,10 @@ const hasToc = tocItems.length > 0;
       },
       { rootMargin: "-90px 0px -70% 0px", threshold: 0 },
     );
-    for (const target of targets) observer.observe(target);
+    observer = obs;
+    for (const target of targets) obs.observe(target);
   };
+  if (document.querySelector(".toc")) setupToc();
   document.addEventListener("astro:page-load", setupToc);
 </script>
 

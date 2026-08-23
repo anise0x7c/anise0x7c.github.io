@@ -1,5 +1,4 @@
 ---
-import { ClientRouter } from "astro:transitions";
 import { Font, Image } from "astro:assets";
 import "../styles/global.css";
 import { SITE } from "../consts";
@@ -18,10 +17,15 @@ const {
 } = Astro.props;
 
 const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url);
+
+// Home page gets a taller banner band (desktop only, via --banner-h-effective
+// below). Server-rendered for full page loads; swup navigations toggle it in
+// the visit:start hook further down so the height morph starts instantly.
+const isHome = Astro.url.pathname === "/";
 ---
 
 <!doctype html>
-<html lang="zh-CN" transition:name="root" transition:animate="none">
+<html lang="zh-CN">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -37,8 +41,6 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url);
 
     <meta name="twitter:card" content="summary_large_image" />
 
-    <ClientRouter />
-
     <!-- Self-hosted web fonts (see `fonts` in astro.config.mjs): Nunito
          (rounded sans body), Caveat + Ma Shan Zheng (handwritten accents).
          Preload only the above-the-fold Latin faces; the CJK font ships as
@@ -48,43 +50,34 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url);
     <Font cssVariable="--font-mashanzheng" />
     <Font cssVariable="--font-jetbrains-mono" />
 
-    <!-- Theme is applied before first paint to avoid a flash of the wrong mode.
-         Runs inline, synchronously, in <head>. Re-applied on `astro:after-swap`
-         so the correct theme persists across client-side navigations. -->
+    <!-- Theme is applied before first paint to avoid a flash of the wrong
+         mode. Runs inline, synchronously, in <head> on every full page load.
+         No listener needed for swup navigations: swup only swaps <main>, so
+         <html> and its .dark class survive every navigation untouched. -->
     <script is:inline>
       (() => {
         const key = "theme";
-        const apply = () => {
-          let theme;
-          try {
-            theme = localStorage.getItem(key);
-          } catch {
-            theme = null;
-          }
-          const prefersDark = window.matchMedia(
-            "(prefers-color-scheme: dark)",
-          ).matches;
-          if (theme === "dark" || (!theme && prefersDark)) {
-            document.documentElement.classList.add("dark");
-          }
-        };
-        apply();
-        document.addEventListener("astro:after-swap", apply);
+        let theme;
+        try {
+          theme = localStorage.getItem(key);
+        } catch {
+          theme = null;
+        }
+        const prefersDark = window.matchMedia(
+          "(prefers-color-scheme: dark)",
+        ).matches;
+        if (theme === "dark" || (!theme && prefersDark)) {
+          document.documentElement.classList.add("dark");
+        }
       })();
     </script>
   </head>
-  <body>
-    <!-- Site-wide banner band (fuwari-style top strip). Frozen via
-         transition:animate="none" and stacked ABOVE the root group during
-         view transitions (see animations.css) — the root snapshot always
-         bakes an opaque canvas, so any static layer below it would be
-         hidden for the duration of the animation. -->
-    <div
-      class="site-banner"
-      transition:name="site-banner"
-      transition:animate="none"
-      aria-hidden="true"
-    >
+  <body class:list={[{ "is-home": isHome }]}>
+    <!-- Site-wide banner band (fuwari-style top strip). Lives OUTSIDE swup's
+         swap container (<main>), so the element — and its decoded image —
+         persist across every navigation; the height morph is a plain CSS
+         transition on --banner-h-effective (no snapshot layering). -->
+    <div class="site-banner" aria-hidden="true">
       <Image
         src={Background}
         alt=""
@@ -94,7 +87,11 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url);
       />
     </div>
     <Header />
-    <main>
+    <!-- Swup swap container + animation anchor: the `transition-swup-*` class
+         is what swup awaits (see animationClass in astro.config.mjs); the
+         out/in animations are bound to html.is-leaving / is-rendering in
+         styles/animations.css. -->
+    <main class="transition-swup-page">
       <slot />
     </main>
     <Footer />
@@ -102,30 +99,26 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url);
 </html>
 
 <script>
-  import type { TransitionBeforeSwapEvent } from "astro:transitions/client";
-
-  // Bundled scripts run once; these listeners stay alive across swaps.
-  const VT_GLASS = "data-vt-glass";
-  document.addEventListener("astro:before-preparation", () => {
-    document.documentElement.setAttribute(VT_GLASS, "");
-  });
-  document.addEventListener("astro:before-swap", (event) => {
-    const e = event as TransitionBeforeSwapEvent;
-    // Keep dark mode across navigations: swapRootAttributes copies the
-    // incoming <html>'s attributes, so stamp the class before the swap.
-    // Otherwise the theme is lost → light body anchored by scrollTo's forced
-    // layout → its background-color transition fires → white flash on back-nav.
-    if (document.documentElement.classList.contains("dark")) {
-      e.newDocument.documentElement.classList.add("dark");
-    }
-    e.newDocument.documentElement.setAttribute(VT_GLASS, "");
-    e.viewTransition?.finished.finally(() =>
-      document.documentElement.removeAttribute(VT_GLASS),
+  // Toggle the home banner height class the instant a link is clicked, so
+  // the CSS height transition runs in parallel with the page transition.
+  // Syncing the class from the incoming document (e.g. body-class plugin or
+  // content:replace) would only flip it after the out-animation — the morph
+  // would start late. Mirrors Fuwari's visit:start handler. Swup initializes
+  // on idle, so guard for window.swup not existing yet.
+  const setup = () => {
+    (window as any).swup.hooks.on(
+      "visit:start",
+      (visit: { to: { url: string } }) => {
+        const path = new URL(visit.to.url, location.origin).pathname;
+        document.body.classList.toggle("is-home", path === "/");
+      },
     );
-  });
-  document.addEventListener("astro:page-load", () =>
-    document.documentElement.removeAttribute(VT_GLASS),
-  );
+  };
+  if ((window as any).swup) {
+    setup();
+  } else {
+    document.addEventListener("swup:enable", setup);
+  }
 </script>
 
 <style is:global>
@@ -133,23 +126,47 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url);
     display: block;
     min-height: calc(100vh - 3.75rem);
   }
+
+  /*
+    Effective banner height: regular pages use --banner-h; the home page is
+    taller but only on desktop (Fuwari gates its lg:is-home rules behind the
+    same 1024px breakpoint). Pages offset their content with --banner-h (fixed
+    offset) or --banner-h-effective (track the taller home banner).
+  */
+  body {
+    --banner-h-effective: var(--banner-h);
+  }
+
+  @media (min-width: 1024px) {
+    body.is-home {
+      --banner-h-effective: var(--banner-h-home);
+    }
+  }
 </style>
 
 <style>
   /*
     The banner band only — paper colour stays on the canvas (body in
-    global.css) because the root VT snapshot bakes the canvas opaquely.
-    Height token: --banner-h (themes.css); freeze + z-index rules:
-    animations.css.
+    global.css). Height token: --banner-h / --banner-h-home (themes.css).
+    The height transition is the cross-page morph: the element persists
+    across swup navigations, only its height animates (65dvh on home/desktop
+    ↔ 35dvh elsewhere).
   */
   .site-banner {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
-    height: 65dvh;
+    height: var(--banner-h-effective);
     z-index: -1;
     pointer-events: none;
+    transition: height 0.4s var(--ease-enter);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .site-banner {
+      transition: none;
+    }
   }
 
   .band {

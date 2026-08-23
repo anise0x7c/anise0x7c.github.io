@@ -1,46 +1,4 @@
----
-import type { Post } from "../utils/posts";
-import { Image } from "astro:assets";
-import { stickerColor } from "../utils/color";
-import FormattedDate from "./FormattedDate.astro";
-
-interface Props {
-  post: Post;
-}
-
-const { post } = Astro.props;
-const { title, description, pubDate, tags, cover, draft } = post.data;
-const tagChips = tags.map((tag) => ({ tag, color: stickerColor(tag) }));
----
-
-<a
-  class:list={["card", { "has-cover": !!cover }]}
-  href={`/blogs/${post.id}`}
->
-  <div class="card-inner">
-    <div class="card-meta">
-      {import.meta.env.DEV && draft && (<span>🚧 - </span>)}
-      <FormattedDate date={pubDate} />
-    </div>
-    <h3>{title}</h3>
-    <p>{description}</p>
-    <div class="card-tags">
-      {tagChips.map(({ tag, color }) => (
-        <span class="chip" style={`--tag-color: ${color}`}>
-          #{tag}
-        </span>
-      ))}
-    </div>
-  </div>
-
-  {cover &&(
-    <div class="cover-box">
-      <Image src={cover} alt="" width={640} height={360} class="cover-img" />
-    </div>
-  )}
-</a>
-
-
+```html
 
 <style>
   .card {
@@ -49,9 +7,11 @@ const tagChips = tags.map((tag) => ({ tag, color: stickerColor(tag) }));
     flex-direction: row;
     overflow: hidden;
 
-    background-color: var(--color-base);
-    border-radius: var(--radius-xl);
+    background-color: color-mix(in srgb, var(--color-base) 75%, transparent);
+    border-radius: var(--radius-3xl);
     box-shadow: var(--shadow-card);
+    backdrop-filter: blur(10px) saturate(1.6);
+    -webkit-backdrop-filter: blur(10px) saturate(1.6);
 
     transition:
       transform 0.4s var(--ease-bounce),
@@ -59,9 +19,25 @@ const tagChips = tags.map((tag) => ({ tag, color: stickerColor(tag) }));
       background-color 0.4s var(--ease-spring);
   }
 
+  /* inset 阴影绘制在子内容之下,满宽图片会盖住它们;
+     改由覆盖层伪元素承载,悬浮于内容之上 */
+  .card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    box-shadow: inset 0 0 0 1px var(--color-overlay0);
+    transition: box-shadow 0.4s var(--ease-spring);
+  }
+
   .card:hover {
     transform:scale(1.03);
     box-shadow: var(--shadow-float);
+  }
+
+  .card:hover::after {
+    box-shadow: var(--shadow-lqdglass);
   }
 
   .card:active {
@@ -142,3 +118,4 @@ const tagChips = tags.map((tag) => ({ tag, color: stickerColor(tag) }));
   }
 
 </style>
+```

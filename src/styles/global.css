@@ -15,25 +15,11 @@
     -webkit-text-size-adjust: 100%;
   }
 
-  /*
-    During view transitions Astro sets `data-astro-transition` on <html> for
-    the entire lifecycle (callback + animation).  Force instant scroll so the
-    router's internal scrollTo() jump is captured correctly in the new VT
-    snapshot — otherwise the snapshot freezes at scroll 0 and "flashes" to the
-    real position when the overlay is removed.
-  */
-  html[data-astro-transition] {
-    scroll-behavior: auto;
-  }
-
   body {
-    /* The canvas MUST carry the paper colour. Per css-view-transitions, the
-       root snapshot always bakes in the canvas background as an opaque
-       image — a transparent body would make the snapshot a solid UA-white
-       block that covers static layers below the root group during the
-       transition. Keeping the canvas == paper colour makes the snapshot
-       blend seamlessly with the real background. */
-    background-color: var(--color-base);
+    /* Canvas carries the mantle colour — one step darker than base — so
+       header/cards/hero surfaces on --color-base read as a lighter layer
+       floating above the page. */
+    background-color: var(--color-mantle);
     color: var(--color-text);
     font-family: var(--font-sans);
     text-rendering: optimizeLegibility;

@@ -29,6 +29,16 @@
   --container-page: 72rem; /* 页面整体宽度上限 (Header / Footer / list pages) */
   --container-article: 64rem; /* 文章 + 侧栏 (TOC) 并排时宽度上限 */
   --container-prose: 44rem; /* 正文可读行宽上限 (~66-70 字/行) */
+
+  /*
+    Fuwari-style site banner band heights (see Banner in BaseLayout):
+    --banner-h      regular pages
+    --banner-h-home home page, desktop (≥1024px) only — mobile keeps --banner-h
+    BaseLayout derives --banner-h-effective on <body> from these; page
+    content offsets consume either --banner-h or --banner-h-effective.
+  */
+  --banner-h: 35dvh;
+  --banner-h-home: 65dvh;
 }
 
 

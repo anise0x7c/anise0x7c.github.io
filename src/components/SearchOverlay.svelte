@@ -129,7 +129,7 @@
       const item = results[activeIndex];
       if (item) {
         e.preventDefault();
-        // Click the rendered anchor so ClientRouter handles the navigation.
+        // Click the rendered anchor so swup handles the navigation.
         document
           .querySelector<HTMLAnchorElement>(`a[data-idx="${activeIndex}"]`)
           ?.click();
