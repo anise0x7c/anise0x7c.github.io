@@ -52,6 +52,7 @@ scripts/tui/
 │   ├── frontmatter.ts    frontmatter 读写、日期工具、类型归一化
 │   ├── slug.ts           slugify() + isSlugAvailable()
 │   ├── editor.ts         openInEditor()：调起 $EDITOR/$VISUAL/vi
+│   ├── image.ts          optimizeCover()：sharp 压缩封面为 WebP
 │   └── ui.ts             pickPost()：文章选择器（唯一引用 @inquirer 的 lib 文件）
 └── actions/              每个 action 一个文件（交互流程）
     ├── list.ts           listPosts()
@@ -190,13 +191,14 @@ export const BLOG_DIR = join(PROJECT_ROOT, "src", "content", "blog");
 
 ## 7. 依赖
 
-全部为 `devDependencies`（不影响生产构建）：
+除 `sharp`（本就在 `dependencies` 中，站点构建与 TUI 共用）外，其余为 `devDependencies`（不影响生产构建）：
 
 | 包 | 用途 |
 | --- | --- |
 | `tsx` | 直接执行 TS |
 | `@inquirer/prompts` | select / input / confirm |
 | `gray-matter` | frontmatter 读写 |
+| `sharp` | `lib/image.ts` 压缩封面为 WebP（`dependencies`） |
 | `@types/node` | Node API 类型（项目原本缺失，`^22.10` 对齐 Node 22 引擎） |
 
 无 lint / test / format 脚本——按仓库既有约定，**类型检查以 `pnpm astro check` 为准**。
@@ -225,7 +227,7 @@ printf '' | pnpm tui   # 无 TTY 冒烟：应打印菜单 + "aborted."，退出�
 ## 9. 已知限制与后续方向
 
 - **frontmatter 格式化归一化**（§5.3）：功能无损，风格不同于手写。要「输出即手写式样」需引入自定义 YAML engine。
-- **不管理封面图**：`cover` 字段在 `types.ts` 中存在、写回时保留，但 edit 流程暂不能编辑它；新建 folder 形态时也不拷贝封面资源。
+- **不管理封面图（已补 create，edit 仍缺）**：`cover` 字段在 `types.ts` 中存在、写回时保留；`create` 流程现支持 **folder 形态**下输入图片路径 → `lib/image.ts` 用 sharp 压缩为 `cover.webp`（限宽 1600、WebP q78、非破坏）并写入 `cover` 字段；`edit` 流程仍不能编辑它。
 - **tags 无联想**：新建/编辑时用逗号分隔输入，不做已有标签补全。
 - **slug 不支持中文/多级路径**：校验强制 `[a-z0-9-]`，纯中文标题需手输 slug。
 - **无自动测试**：数据层可独立复用，未来可加一个纯 Node 的单元测试入口（不引入 test runner 也行，用 `assert` 断言脚本）。
