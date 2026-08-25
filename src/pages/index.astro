@@ -63,6 +63,8 @@ const recent = await getRecentPosts(6);
        with the shrinking/growing band instead of jumping. */
     margin: calc(var(--banner-h) - 10dvh) auto;
     padding: 0 1.5rem;
+    /* Glide the translate in lock-step with the banner's height morph. */
+    transition: translate 0.4s var(--ease-enter);
   }
 
   @media (min-width: 1024px) {
@@ -85,8 +87,7 @@ const recent = await getRecentPosts(6);
     border-radius: var(--radius-3xl);
     box-shadow: var(--shadow-card);
 
-    transition:
-      box-shadow 0.4s var(--ease-spring), 
+    transition: box-shadow 0.4s var(--ease-spring);
   }
 
   .hero:hover {
