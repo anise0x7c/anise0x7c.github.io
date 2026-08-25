@@ -264,7 +264,7 @@ aaaaaaaaaa|bbbbbbbbbb|cccccccccc|ddddddddbb|eeeeeeeeee|ffffffffff|gggggggggg|hhh
 
 相对路径本地图（会被 Astro 自动优化为 webp）：
 
-![横幅配图 - 追逐色彩](../../assets/images/hyousoku.jpg)
+![本地图片](/src/assets/images/chasing-color-hrz.webp)
 
 远程图片（不会被优化，仅测试外链渲染）：
 

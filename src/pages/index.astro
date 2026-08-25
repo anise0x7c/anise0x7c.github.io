@@ -63,10 +63,6 @@ const recent = await getRecentPosts(6);
        with the shrinking/growing band instead of jumping. */
     margin: calc(var(--banner-h) - 10dvh) auto;
     padding: 0 1.5rem;
-    /* Same params as .site-banner's height transition (BaseLayout) so the
-       hero tracks the band edge exactly; translate is compositor-driven,
-       no reflow of the article list below. */
-    transition: translate 0.4s var(--ease-enter);
   }
 
   @media (min-width: 1024px) {
@@ -91,7 +87,6 @@ const recent = await getRecentPosts(6);
 
     transition:
       box-shadow 0.4s var(--ease-spring), 
-      background-color 0.4s var(--ease-spring);
   }
 
   .hero:hover {

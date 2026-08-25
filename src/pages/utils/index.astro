@@ -1,0 +1,43 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import ColorPalette from "../../components/ColorPalette.svelte";
+---
+
+<BaseLayout>
+  <section class="container">
+    <div class="page-head">
+      <h1>Site Utils</h1>
+      <p>站内小工具</p>
+    </div>
+
+    <ColorPalette client:load />
+  </section>
+</BaseLayout>
+
+
+
+
+<style>
+  .container {
+    max-width: var(--container-page);
+    margin: var(--banner-h) auto;
+    padding: 0 1.5rem;
+  }
+
+  .page-head {
+    margin-bottom: 2.5rem;
+  }
+
+  .page-head h1 {
+    font-size: clamp(2rem, 5vw, 2.8rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin: 0;
+  }
+
+  .page-head p {
+    margin: 0.5rem 0 0;
+    color: var(--color-subtext1);
+    font-size: 1.05rem;
+  }
+</style>

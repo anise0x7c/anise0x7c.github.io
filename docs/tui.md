@@ -227,7 +227,7 @@ printf '' | pnpm tui   # 无 TTY 冒烟：应打印菜单 + "aborted."，退出�
 ## 9. 已知限制与后续方向
 
 - **frontmatter 格式化归一化**（§5.3）：功能无损，风格不同于手写。要「输出即手写式样」需引入自定义 YAML engine。
-- **不管理封面图（已补 create，edit 仍缺）**：`cover` 字段在 `types.ts` 中存在、写回时保留；`create` 流程现支持 **folder 形态**下输入图片路径 → `lib/image.ts` 用 sharp 压缩为 `cover.webp`（限宽 1600、WebP q78、非破坏）并写入 `cover` 字段；`edit` 流程仍不能编辑它。
+- **不管理封面图（已补 create，edit 仍缺）**：`cover` 字段在 `types.ts` 中存在、写回时保留；`create` 流程现支持 **folder 形态**下输入图片路径 → `lib/image.ts` 用 sharp 压缩为 `cover.webp`（限宽 1600、WebP q90（高保真母版）、非破坏）并写入 `cover` 字段；`edit` 流程仍不能编辑它。
 - **tags 无联想**：新建/编辑时用逗号分隔输入，不做已有标签补全。
 - **slug 不支持中文/多级路径**：校验强制 `[a-z0-9-]`，纯中文标题需手输 slug。
 - **无自动测试**：数据层可独立复用，未来可加一个纯 Node 的单元测试入口（不引入 test runner 也行，用 `assert` 断言脚本）。

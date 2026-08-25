@@ -8,14 +8,11 @@ export const SITE = {
 } as const;
 
 export const NAV_LINKS = [
-  { href: "/blogs", label: "Blog" },
-  { href: "/docs", label: "Docs"}
+  { href: "/blogs", label: "Blogs" },
+  { href: "/docs", label: "Docs"},
+  { href: "/utils", label: "Utils"}
 ] as const;
 
-export const SOCIAL_LINKS = [
-  { href: "https://github.com", label: "GitHub" },
-  { href: "https://x.com", label: "Twitter" },
-] as const;
 
 // Sort posts by this frontmatter field, descending.
 export const POSTS_PER_PAGE = 10;

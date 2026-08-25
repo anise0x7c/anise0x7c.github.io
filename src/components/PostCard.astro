@@ -15,6 +15,13 @@ const { title, description, pubDate, tags, cover, draft } = post.data;
   class:list={["card", { "has-cover": !!cover }]}
   href={`/blogs/${post.id}`}
 >
+  {cover && (
+    <div class="cover" aria-hidden="true">
+      <Image src={cover} alt="" width={640} height={360} class="cover-img" />
+    </div>
+  )}
+  {cover && <div class="cover-scrim" aria-hidden="true"></div>}
+
   <div class="card-inner">
     <div class="card-meta">
       {import.meta.env.DEV && draft && (<span>🚧 - </span>)}
@@ -28,12 +35,6 @@ const { title, description, pubDate, tags, cover, draft } = post.data;
       ))}
     </div>
   </div>
-
-  {cover &&(
-    <div class="cover-box">
-      <Image src={cover} alt="" width={640} height={360} class="cover-img" />
-    </div>
-  )}
 </a>
 
 
@@ -42,7 +43,7 @@ const { title, description, pubDate, tags, cover, draft } = post.data;
   .card {
     position: relative;
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     overflow: hidden;
 
     background-color: var(--color-base);
@@ -50,7 +51,6 @@ const { title, description, pubDate, tags, cover, draft } = post.data;
     box-shadow: var(--shadow-card);
 
     transition:
-      /* transform 0.4s var(--ease-bounce),*/
       box-shadow 0.4s var(--ease-spring),
       background-color 0.4s var(--ease-spring);
   }
@@ -61,6 +61,7 @@ const { title, description, pubDate, tags, cover, draft } = post.data;
     content: "";
     position: absolute;
     inset: 0;
+    z-index: 3;
     border-radius: inherit;
     pointer-events: none;
     transition: box-shadow 0.4s var(--ease-spring);
@@ -75,14 +76,10 @@ const { title, description, pubDate, tags, cover, draft } = post.data;
     box-shadow: inset 0 0 0 1px var(--color-overlay0);
   }
 
-  .card:active {
-    transform:scale(1);
-  }
-
-  .cover-box {
-    contain: size;
-    flex: 1;
-    margin: 1rem;
+  .cover {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
   }
 
   .cover-img {
@@ -90,36 +87,29 @@ const { title, description, pubDate, tags, cover, draft } = post.data;
     object-fit: cover;
     width: 100%;
     height: 100%;
-    border-radius: var(--radius-xl);
+  }
+
+  .cover-scrim {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: color-mix(in srgb, var(--color-base) 75%, transparent);
   }
 
   .card-inner {
+    position: relative;
+    z-index: 2;
+    flex: 1;
     display: flex;
-    flex: 3;
     flex-direction: column;
     justify-content: center;
-    margin: 2.3rem 1rem 2.3rem 2.3rem;
+    padding: 2.5rem;
     border-radius: inherit;
   }
 
   @media (max-width: 640px) {
-    .card {
-      flex-direction: column;
-    }
-
-    .cover-box {
-      order: -1;
-      aspect-ratio: 21 / 9;
-      margin: 0;
-      contain: none; /* 通栏顶图需正常参与高度布局 */
-    }
-
-    .cover-img {
-      border-radius: 0;
-    }
-
-    .has-cover .card-inner {
-      margin: 1.5rem 2.7rem 2.7rem 2.7rem;
+    .card-inner {
+      padding: 1.5rem 2rem;
     }
   }
 

@@ -1,10 +1,12 @@
 ---
-title: "Hello, World"
-description: "! ? 神秘小站 ? !"
-pubDate: 2026-08-01
-updatedDate: 2026-08-18
-tags: ["meta", "writing"]
+title: 'Hello, World'
+description: '! ? 神秘小站 ? !'
+pubDate: '2026-08-01'
+tags:
+  - meta
+  - writing
 draft: false
+updatedDate: '2026-08-25'
 ---
 
 ## 窝趣，是神秘 HelloWorld 仪式
@@ -24,13 +26,9 @@ BlogBeta 出现了。
 虽然但是，现在网站处于一个能用就行的阶段，如你所见，文章页面还是有点草率。还有好多事情要做，而且
 我也有点强迫症喜欢扣细节
 
-**TODOS**:
-- [x] 添加主页封面插画
-- [ ] 添加 Tailwind CSS Typography 来管理 Markdown -> HTML
-- [ ] 调优播客页面界面布局
-
 ## 技术栈
 我选择了最轮椅的打法 (bushi)
 - **Astro 7** 内容管理和路由框架，可以直接把 Markdown 渲染为一个 HTML 页面
+- **Swup** 过渡动画
 - **Svelte 5** 由于 Astro 默认只生成静态网页 (SSG), 所以交互的地方就用 svelte 组件
 - **Tailwind v4** 老演员这一块，不过这个网站里 Tailwind class 用的不是很多

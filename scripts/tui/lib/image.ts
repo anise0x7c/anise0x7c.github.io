@@ -10,9 +10,14 @@ import sharp from "sharp";
 // Rationale: raw covers routinely land at 5–12 MB; the output here is in the
 // low hundreds of KB, so the git repo grows ~30× slower. sharp is already a
 // project dependency (used by Astro's image service), so this adds no deps.
+//
+// Quality is deliberately high (90): this file is a *master*, not the final
+// render — Astro re-encodes every <Image> at build time (sharp, default
+// q80). A high-quality master keeps that re-encode a single effective
+// lossy pass; a low-q master would compound generation loss twice over.
 
 const COVER_MAX_WIDTH = 1600;
-const COVER_QUALITY = 78;
+const COVER_QUALITY = 90;
 export const COVER_FILENAME = "cover.webp";
 
 export interface OptimizeResult {

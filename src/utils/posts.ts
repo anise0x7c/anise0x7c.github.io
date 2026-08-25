@@ -14,6 +14,6 @@ export async function getPublishedPosts(): Promise<Post[]> {
 }
 
 /** A few most-recent posts, e.g. for the home page preview. */
-export async function getRecentPosts(limit = 3): Promise<Post[]> {
+export async function getRecentPosts(limit = 4): Promise<Post[]> {
   return (await getPublishedPosts()).slice(0, limit);
 }
