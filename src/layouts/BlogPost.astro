@@ -2,7 +2,6 @@
 import type { MarkdownHeading } from "astro";
 import { Image } from "astro:assets";
 import type { Post } from "../utils/posts";
-import { stickerColor } from "../utils/color";
 import BaseLayout from "./BaseLayout.astro";
 import FormattedDate from "../components/FormattedDate.astro";
 
@@ -50,9 +49,7 @@ const hasToc = tocItems.length > 0;
           <ul class="tags" data-pagefind-ignore>
             {tags.map((tag) => (
               <li>
-                <span class="chip" style={`--tag-color: ${stickerColor(tag)}`}>
-                  #{tag}
-                </span>
+                <span class="chip">#{tag}</span>
               </li>
             ))}
           </ul>
@@ -279,8 +276,8 @@ const hasToc = tocItems.length > 0;
   }
 
   .toc-item a.active {
-    color: var(--color-accent-mns);
-    border-left-color: var(--color-accent-mns);
+    color: var(--color-accent);
+    border-left-color: var(--color-accent);
     font-weight: 500;
   }
 
@@ -297,6 +294,6 @@ const hasToc = tocItems.length > 0;
   }
 
   .post-footer a:hover {
-    color: var(--color-accent-mns);
+    color: var(--color-accent);
   }
 </style>

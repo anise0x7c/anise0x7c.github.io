@@ -52,15 +52,14 @@
   bg-base / bg-surface0 / text-subtext0 / bg-mauve exist for the whole
   family, even where the site only consumes a subset today.
 
-  Dynamic hue knob (Fuwari-style): every NEUTRAL (text→crust ramp) below is
-  an oklch(L C var(--hue)) formula — L/C are rounded decompositions of the
-  original hexes, hue follows the single --hue property. The two ACCENT
-  families sit at ±60° of the knob (MD3-tertiary-inspired): --accent-pls-*
-  = hue + 60, --accent-mns-* = hue − 60. Writing --hue (inline style on
-  <html>, set before first paint by BaseLayout from localStorage) re-derives
-  the whole palette live. The 14 chromatic Catppuccin accents stay static:
-  they are a multi-hue family (tag sticker colours) and must not collapse
-  onto one hue. See docs/color-system.md.
+  Dynamic hue knob (Fuwari-style): every NEUTRAL (text→crust ramp) and the
+  ACCENT family below are oklch(L C var(--hue)) formulas — L/C are rounded
+  decompositions of the original hexes, hue follows the single --hue property
+  (the accent sits directly on the knob, no offset). Writing --hue (inline
+  style on <html>, set before first paint by BaseLayout from localStorage)
+  re-derives the whole palette live. The 14 chromatic Catppuccin accents stay
+  static: they are a multi-hue family kept for future use. See
+  docs/color-system.md.
 */
 @theme inline {
   --color-rosewater: var(--rosewater);
@@ -94,18 +93,12 @@
   --color-mantle: var(--mantle);
   --color-crust: var(--crust);
 
-  /* Accent families — independent of the Catppuccin palette, derived from
-     the hue knob at ±60°: --accent-pls-* (plus, hue+60) and --accent-mns-*
-     (minus, hue−60). Utilities: bg-accent-pls / text-accent-mns-strong / … */
-  --color-accent-pls: var(--accent-pls);
-  --color-accent-pls-strong: var(--accent-pls-strong);
-  --color-accent-pls-contrast: var(--accent-pls-contrast);
-  --color-accent-pls-soft: var(--accent-pls-soft);
-
-  --color-accent-mns: var(--accent-mns);
-  --color-accent-mns-strong: var(--accent-mns-strong);
-  --color-accent-mns-contrast: var(--accent-mns-contrast);
-  --color-accent-mns-soft: var(--accent-mns-soft);
+  /* Independent site accent — oklch(L C var(--hue)), follows the knob
+     directly (no hue offset). Utilities: bg-accent / text-accent-strong / … */
+  --color-accent: var(--accent);
+  --color-accent-strong: var(--accent-strong);
+  --color-accent-contrast: var(--accent-contrast);
+  --color-accent-soft: var(--accent-soft);
 
   /* Alias names must differ from the runtime vars (--sh-*): a same-name
      alias emits `--shadow-x: var(--shadow-x)` into @layer theme — a circular
@@ -161,19 +154,12 @@
   --mantle: oklch(0.93 0.01 var(--hue));
   --crust: oklch(0.91 0.01 var(--hue));
 
-  /* Accent families (independent of Catppuccin) — MD3-tertiary-inspired:
-     derived from the hue knob at ±60°. calc() requires the unitless knob
-     (see --hue above); CSS hue angles wrap, so results below 0 / above 360
-     are valid. pls = hue + 60, mns = hue − 60. */
-  --accent-pls: oklch(0.72 0.18 calc(var(--hue) + 60));
-  --accent-pls-strong: oklch(0.75 0.16 calc(var(--hue) + 60));
-  --accent-pls-contrast: oklch(0.98 0.01 calc(var(--hue) + 60));
-  --accent-pls-soft: color-mix(in srgb, var(--accent-pls) 14%, transparent);
-
-  --accent-mns: oklch(0.72 0.18 calc(var(--hue) - 60));
-  --accent-mns-strong: oklch(0.75 0.16 calc(var(--hue) - 60));
-  --accent-mns-contrast: oklch(0.98 0.01 calc(var(--hue) - 60));
-  --accent-mns-soft: color-mix(in srgb, var(--accent-mns) 14%, transparent);
+  /* Accent family (independent of Catppuccin) — oklch(L C var(--hue)), sits
+     directly on the knob. L/C kept from the original brand pink #ff6b8d. */
+  --accent: oklch(0.72 0.18 var(--hue));
+  --accent-strong: oklch(0.75 0.16 var(--hue));
+  --accent-contrast: oklch(0.98 0.01 var(--hue));
+  --accent-soft: color-mix(in srgb, var(--accent) 14%, transparent);
 
   /* shadows(?inset, offset-x, offset-y, blur, ?spread, color) — mixed from
      the live --text token so they re-tint with the knob. (Original values
@@ -228,17 +214,12 @@
   --mantle: oklch(0.22 0.03 var(--hue));
   --crust: oklch(0.18 0.02 var(--hue));
 
-  /* Accent families — same ±60° derivation as light mode, Mocha's softer
-     L/C (light/dark differ in tone, not hue geometry). */
-  --accent-pls: oklch(0.88 0.06 calc(var(--hue) + 60));
-  --accent-pls-strong: oklch(0.91 0.05 calc(var(--hue) + 60));
-  --accent-pls-contrast: oklch(0.26 0.06 calc(var(--hue) + 60));
-  --accent-pls-soft: color-mix(in srgb, var(--accent-pls) 16%, transparent);
-
-  --accent-mns: oklch(0.88 0.06 calc(var(--hue) - 60));
-  --accent-mns-strong: oklch(0.91 0.05 calc(var(--hue) - 60));
-  --accent-mns-contrast: oklch(0.26 0.06 calc(var(--hue) - 60));
-  --accent-mns-soft: color-mix(in srgb, var(--accent-mns) 16%, transparent);
+  /* Accent family — same knob hue as light mode, Mocha's softer L/C
+     (light/dark differ in tone, not hue). */
+  --accent: oklch(0.88 0.06 var(--hue));
+  --accent-strong: oklch(0.91 0.05 var(--hue));
+  --accent-contrast: oklch(0.26 0.06 var(--hue));
+  --accent-soft: color-mix(in srgb, var(--accent) 16%, transparent);
 
   /* shadows — mixed from --crust (original: rgba of Mocha crust #11111b at
      the same alphas) */

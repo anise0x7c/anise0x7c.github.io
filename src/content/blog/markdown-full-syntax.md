@@ -289,7 +289,7 @@ aaaaaaaaaa|bbbbbbbbbb|cccccccccc|ddddddddbb|eeeeeeeeee|ffffffffff|gggggggggg|hhh
 
 Markdown 允许直接写 HTML：
 
-<p align="center" style="color: var(--color-accent-pls);">
+<p align="center" style="color: var(--color-accent);">
   这是一段手写的 <code>&lt;p&gt;</code>，试着带上了主题色。
 </p>
 

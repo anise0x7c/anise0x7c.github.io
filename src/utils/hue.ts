@@ -1,10 +1,10 @@
 // Runtime helpers for the site-wide hue knob (Fuwari-style dynamic colours).
 //
-// The knob itself is the --hue CSS custom property: every neutral token in
-// themes.css is an oklch(L C var(--hue)) formula and the two accent families
-// sit at ±60° of it (--accent-pls-* / --accent-mns-*), so writing the
-// property re-derives the whole palette live (the global colour transition
-// in global.css makes the change flow instead of snap).
+// The knob itself is the --hue CSS custom property: every neutral token and
+// the accent family in themes.css are oklch(L C var(--hue)) formulas (the
+// accent sits directly on the knob), so writing the property re-derives the
+// whole palette live (the global colour transition in global.css makes the
+// change flow instead of snap).
 //
 // No UI consumes these yet — they exist for console experiments
 // (try: `await import("/src/utils/hue.ts").then(m => m.setHue(250))`) and
