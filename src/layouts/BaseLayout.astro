@@ -1,7 +1,7 @@
 ---
 import { Font, Image } from "astro:assets";
 import "../styles/global.css";
-import { SITE } from "../consts";
+import { SITE, DEFAULT_HUE } from "../consts";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import Background from "../assets/images/chasing-color-hrz.jpg";
@@ -50,11 +50,12 @@ const isHome = Astro.url.pathname === "/";
     <Font cssVariable="--font-mashanzheng" />
     <Font cssVariable="--font-jetbrains-mono" />
 
-    <!-- Theme is applied before first paint to avoid a flash of the wrong
-         mode. Runs inline, synchronously, in <head> on every full page load.
-         No listener needed for swup navigations: swup only swaps <main>, so
-         <html> and its .dark class survive every navigation untouched. -->
-    <script is:inline>
+    <!-- Theme + hue knob are applied before first paint to avoid a flash of
+         the wrong mode/colour. Runs inline, synchronously, in <head> on every
+         full page load. No listener needed for swup navigations: swup only
+         swaps <main>, so <html>, its .dark class and the inline --hue style
+         survive every navigation untouched. -->
+    <script is:inline define:vars={{ defaultHue: DEFAULT_HUE }}>
       (() => {
         const key = "theme";
         let theme;
@@ -64,11 +65,34 @@ const isHome = Astro.url.pathname === "/";
           theme = null;
         }
         const prefersDark = window.matchMedia(
-          "(prefers-color-scheme: dark)",
+          "(prefers-color-scheme: dark)"
         ).matches;
         if (theme === "dark" || (!theme && prefersDark)) {
           document.documentElement.classList.add("dark");
         }
+      })();
+
+      (() => {
+        // Hue knob (Fuwari-style): every oklch(L C var(--hue)) token in
+        // themes.css resolves against this property. Restored from
+        // localStorage; validated to keep dirty/corrupt values out.
+        let hue = defaultHue;
+        try {
+          // Read the raw string first: Number(null) === 0 (not NaN), so a
+          // missing key must be checked explicitly — otherwise a cleared
+          // storage silently forces hue 0 instead of falling back to the
+          // configured default.
+          const raw = localStorage.getItem("hue");
+          if (raw !== null) {
+            const stored = Number(raw);
+            if (Number.isFinite(stored) && stored >= 0 && stored < 360) {
+              hue = stored;
+            }
+          }
+        } catch {
+          /* storage may be unavailable */
+        }
+        document.documentElement.style.setProperty("--hue", String(hue));
       })();
     </script>
   </head>
@@ -162,11 +186,12 @@ const isHome = Astro.url.pathname === "/";
   */
   .site-banner {
     position: sticky;
-    top: calc(10dvh - var(--banner-h-effective));
+    top: calc(10dvh - var(--banner-h-effective)); /* min visibility */
     height: var(--banner-h-effective);
     margin-bottom: calc(-1 * var(--banner-h-effective));
     z-index: -1;
     pointer-events: none;
+    box-shadow: var(--shadow-sticky);
     transition:
       height 0.4s var(--ease-enter),
       top 0.4s var(--ease-enter),

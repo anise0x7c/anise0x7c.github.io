@@ -38,7 +38,7 @@
     content offsets consume either --banner-h or --banner-h-effective.
   */
   --banner-h: 35dvh;
-  --banner-h-home: 65dvh;
+  --banner-h-home: 60dvh;
 }
 
 
@@ -51,6 +51,16 @@
   dark = Mocha. The full 26-colour palette is aliased here so utilities like
   bg-base / bg-surface0 / text-subtext0 / bg-mauve exist for the whole
   family, even where the site only consumes a subset today.
+
+  Dynamic hue knob (Fuwari-style): every NEUTRAL (text→crust ramp) below is
+  an oklch(L C var(--hue)) formula — L/C are rounded decompositions of the
+  original hexes, hue follows the single --hue property. The two ACCENT
+  families sit at ±60° of the knob (MD3-tertiary-inspired): --accent-pls-*
+  = hue + 60, --accent-mns-* = hue − 60. Writing --hue (inline style on
+  <html>, set before first paint by BaseLayout from localStorage) re-derives
+  the whole palette live. The 14 chromatic Catppuccin accents stay static:
+  they are a multi-hue family (tag sticker colours) and must not collapse
+  onto one hue. See docs/color-system.md.
 */
 @theme inline {
   --color-rosewater: var(--rosewater);
@@ -84,13 +94,18 @@
   --color-mantle: var(--mantle);
   --color-crust: var(--crust);
 
-  /* Independent site accent — deliberately NOT part of the Catppuccin
-     palette. Keeps its own runtime vars so the brand pink can be re-tuned
-     without touching Catppuccin colours (and vice versa). */
-  --color-accent: var(--accent);
-  --color-accent-strong: var(--accent-strong);
-  --color-accent-contrast: var(--accent-contrast);
-  --color-accent-soft: var(--accent-soft);
+  /* Accent families — independent of the Catppuccin palette, derived from
+     the hue knob at ±60°: --accent-pls-* (plus, hue+60) and --accent-mns-*
+     (minus, hue−60). Utilities: bg-accent-pls / text-accent-mns-strong / … */
+  --color-accent-pls: var(--accent-pls);
+  --color-accent-pls-strong: var(--accent-pls-strong);
+  --color-accent-pls-contrast: var(--accent-pls-contrast);
+  --color-accent-pls-soft: var(--accent-pls-soft);
+
+  --color-accent-mns: var(--accent-mns);
+  --color-accent-mns-strong: var(--accent-mns-strong);
+  --color-accent-mns-contrast: var(--accent-mns-contrast);
+  --color-accent-mns-soft: var(--accent-mns-soft);
 
   /* Alias names must differ from the runtime vars (--sh-*): a same-name
      alias emits `--shadow-x: var(--shadow-x)` into @layer theme — a circular
@@ -102,8 +117,16 @@
   --shadow-lqdglass: var(--sh-lqdglass);
 }
 
-/* Light theme — Catppuccin Latte */
+/* Light theme — Catppuccin Latte, neutrals + accent parameterised on --hue */
 :root {
+  /* Single site-wide hue knob (degrees, unitless so JS can write plain
+     numbers). This stylesheet default is only the fallback — the first-paint
+     script in BaseLayout.astro sets it as an inline style on <html>
+     (localStorage > default), which wins the cascade and, because swup never
+     replaces <html>, survives every client-side navigation. */
+  --hue: 215;
+
+  /* Chromatic accents — Catppuccin Latte, deliberately NOT hue-linked */
   --rosewater: #dc8a78;
   --flamingo: #dd7878;
   --pink: #ea76cb;
@@ -119,45 +142,60 @@
   --blue: #1e66f5;
   --lavender: #7287fd;
 
-  --text: #4c4f69;
-  --subtext1: #5c5f77;
-  --subtext0: #6c6f85;
+  /* Neutral ramp — oklch(L C var(--hue)); L/C are the OKLCH decomposition
+     of the original Latte hexes, rounded to 2 decimals — the tonal ramp (and
+     the subtle chroma falloff text→base) is preserved; only hue rotates. */
+  --text: oklch(0.44 0.04 var(--hue));
+  --subtext1: oklch(0.49 0.04 var(--hue));
+  --subtext0: oklch(0.55 0.03 var(--hue));
 
-  --overlay2: #7c7f93;
-  --overlay1: #8c8fa1;
-  --overlay0: #9ca0b0;
+  --overlay2: oklch(0.6 0.03 var(--hue));
+  --overlay1: oklch(0.65 0.03 var(--hue));
+  --overlay0: oklch(0.71 0.02 var(--hue));
 
-  --surface2: #acb0be;
-  --surface1: #bcc0cc;
-  --surface0: #ccd0da;
+  --surface2: oklch(0.76 0.02 var(--hue));
+  --surface1: oklch(0.81 0.02 var(--hue));
+  --surface0: oklch(0.86 0.01 var(--hue));
 
-  --base: #eff1f5;
-  --mantle: #e6e9ef;
-  --crust: #dce0e8;
+  --base: oklch(0.96 0.01 var(--hue));
+  --mantle: oklch(0.93 0.01 var(--hue));
+  --crust: oklch(0.91 0.01 var(--hue));
 
-  /* Independent brand accent (not Catppuccin) */
-  --accent: #ff6b8d;
-  --accent-strong: #ff7f9d;
-  --accent-contrast: #faf9f7;
-  --accent-soft: rgba(255, 107, 141, 0.14);
+  /* Accent families (independent of Catppuccin) — MD3-tertiary-inspired:
+     derived from the hue knob at ±60°. calc() requires the unitless knob
+     (see --hue above); CSS hue angles wrap, so results below 0 / above 360
+     are valid. pls = hue + 60, mns = hue − 60. */
+  --accent-pls: oklch(0.72 0.18 calc(var(--hue) + 60));
+  --accent-pls-strong: oklch(0.75 0.16 calc(var(--hue) + 60));
+  --accent-pls-contrast: oklch(0.98 0.01 calc(var(--hue) + 60));
+  --accent-pls-soft: color-mix(in srgb, var(--accent-pls) 14%, transparent);
 
-  /* shadows(?inset, offset-x, offset-y, blur, ?spread, color) — tinted with
-     Latte text #4c4f69 */
+  --accent-mns: oklch(0.72 0.18 calc(var(--hue) - 60));
+  --accent-mns-strong: oklch(0.75 0.16 calc(var(--hue) - 60));
+  --accent-mns-contrast: oklch(0.98 0.01 calc(var(--hue) - 60));
+  --accent-mns-soft: color-mix(in srgb, var(--accent-mns) 14%, transparent);
+
+  /* shadows(?inset, offset-x, offset-y, blur, ?spread, color) — mixed from
+     the live --text token so they re-tint with the knob. (Original values
+     were rgba of Latte text #4c4f69 at the same alphas.) The lqdglass
+     highlights stay literal white by design. */
   --sh-sticky:
-    0 2px 4px rgba(76, 79, 105, 0.35);
+    0 2px 4px color-mix(in srgb, var(--text) 35%, transparent);
   --sh-card:
-    0 12px 28px rgba(76, 79, 105, 0.1),
-    0 4px 8px rgba(76, 79, 105, 0.2);
+    0 12px 28px color-mix(in srgb, var(--text) 10%, transparent),
+    0 4px 8px color-mix(in srgb, var(--text) 20%, transparent);
   --sh-float:
-    0 20px 35px rgba(76, 79, 105, 0.2),
-    0 8px 16px rgba(76, 79, 105, 0.3);
+    0 20px 35px color-mix(in srgb, var(--text) 20%, transparent),
+    0 8px 16px color-mix(in srgb, var(--text) 30%, transparent);
   --sh-lqdglass:
     inset 0 5px 20px rgba(255, 255, 255, 0.5),
     inset 0 -15px 30px rgba(255, 255, 255, 0.54);
 }
 
-/* Dark theme — Catppuccin Mocha */
+/* Dark theme — Catppuccin Mocha, same oklch(var(--hue)) system (no --hue
+   redefinition here: the knob is shared, only L/C differ per mode) */
 .dark {
+  /* Chromatic accents — Catppuccin Mocha, deliberately NOT hue-linked */
   --rosewater: #f5e0dc;
   --flamingo: #f2cdcd;
   --pink: #f5c2e7;
@@ -173,38 +211,45 @@
   --blue: #89b4fa;
   --lavender: #b4befe;
 
-  --text: #cdd6f4;
-  --subtext1: #bac2de;
-  --subtext0: #a6adc8;
+  /* Neutral ramp — L/C from the original Mocha hexes, rounded to 2 decimals */
+  --text: oklch(0.88 0.04 var(--hue));
+  --subtext1: oklch(0.82 0.04 var(--hue));
+  --subtext0: oklch(0.75 0.04 var(--hue));
 
-  --overlay2: #9399b2;
-  --overlay1: #7f849c;
-  --overlay0: #6c7086;
+  --overlay2: oklch(0.69 0.04 var(--hue));
+  --overlay1: oklch(0.62 0.04 var(--hue));
+  --overlay0: oklch(0.55 0.03 var(--hue));
 
-  --surface2: #585b70;
-  --surface1: #45475a;
-  --surface0: #313244;
+  --surface2: oklch(0.48 0.03 var(--hue));
+  --surface1: oklch(0.4 0.03 var(--hue));
+  --surface0: oklch(0.32 0.03 var(--hue));
 
-  --base: #1e1e2e;
-  --mantle: #181825;
-  --crust: #11111b;
+  --base: oklch(0.24 0.03 var(--hue));
+  --mantle: oklch(0.22 0.03 var(--hue));
+  --crust: oklch(0.18 0.02 var(--hue));
 
-  /* Independent brand accent (not Catppuccin) */
-  --accent: #fac8dd;
-  --accent-strong: #fad4e4;
-  --accent-contrast: #3d1521;
-  --accent-soft: rgba(255, 143, 171, 0.16);
+  /* Accent families — same ±60° derivation as light mode, Mocha's softer
+     L/C (light/dark differ in tone, not hue geometry). */
+  --accent-pls: oklch(0.88 0.06 calc(var(--hue) + 60));
+  --accent-pls-strong: oklch(0.91 0.05 calc(var(--hue) + 60));
+  --accent-pls-contrast: oklch(0.26 0.06 calc(var(--hue) + 60));
+  --accent-pls-soft: color-mix(in srgb, var(--accent-pls) 16%, transparent);
 
-  /* shadows(?inset, offset-x, offset-y, blur, ?spread, color) — tinted with
-     Mocha crust #11111b */
+  --accent-mns: oklch(0.88 0.06 calc(var(--hue) - 60));
+  --accent-mns-strong: oklch(0.91 0.05 calc(var(--hue) - 60));
+  --accent-mns-contrast: oklch(0.26 0.06 calc(var(--hue) - 60));
+  --accent-mns-soft: color-mix(in srgb, var(--accent-mns) 16%, transparent);
+
+  /* shadows — mixed from --crust (original: rgba of Mocha crust #11111b at
+     the same alphas) */
   --sh-sticky:
-    0 2px 4px rgba(17, 17, 27, 0.8);
+    0 2px 4px color-mix(in srgb, var(--crust) 80%, transparent);
   --sh-card:
-    0 12px 28px rgba(17, 17, 27, 0.8),
-    0 4px 8px rgba(17, 17, 27, 0.9);
+    0 12px 28px color-mix(in srgb, var(--crust) 80%, transparent),
+    0 4px 8px color-mix(in srgb, var(--crust) 90%, transparent);
   --sh-float:
-    0 20px 35px rgba(17, 17, 27, 0.7),
-    0 8px 16px rgba(17, 17, 27, 0.9);
+    0 20px 35px color-mix(in srgb, var(--crust) 70%, transparent),
+    0 8px 16px color-mix(in srgb, var(--crust) 90%, transparent);
   --sh-lqdglass:
     inset 0 5px 20px rgba(255, 255, 255, 0.08),
     inset 0 -15px 30px rgba(255, 255, 255, 0.1);

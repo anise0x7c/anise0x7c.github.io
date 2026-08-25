@@ -49,14 +49,12 @@ const tagChips = tags.map((tag) => ({ tag, color: stickerColor(tag) }));
     flex-direction: row;
     overflow: hidden;
 
-    background-color: color-mix(in srgb, var(--color-base) 75%, transparent);
+    background-color: var(--color-base);
     border-radius: var(--radius-2xl);
     box-shadow: var(--shadow-card);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
 
     transition:
-      transform 0.4s var(--ease-bounce),
+      /* transform 0.4s var(--ease-bounce),*/
       box-shadow 0.4s var(--ease-spring),
       background-color 0.4s var(--ease-spring);
   }
@@ -73,7 +71,7 @@ const tagChips = tags.map((tag) => ({ tag, color: stickerColor(tag) }));
   }
 
   .card:hover {
-    transform:scale(1.02);
+    /* transform:scale(1.02); */
     box-shadow: var(--shadow-float);
   }
 
@@ -87,7 +85,7 @@ const tagChips = tags.map((tag) => ({ tag, color: stickerColor(tag) }));
 
   .cover-box {
     contain: size;
-    flex: 2;
+    flex: 1;
     margin: 1rem;
   }
 

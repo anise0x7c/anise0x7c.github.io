@@ -383,8 +383,8 @@
   }
 
   .result .excerpt :global(mark) {
-    background: var(--color-accent-soft);
-    color: var(--color-accent-strong);
+    background: var(--color-accent-mns-soft);
+    color: var(--color-accent-mns-strong);
     border-radius: 0.2rem;
     padding: 0 0.1em;
   }

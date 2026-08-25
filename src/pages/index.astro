@@ -61,7 +61,7 @@ const recent = await getRecentPosts(6);
        how the banner itself animates its height — so when body.is-home
        flips on navigation, nothing relayouts instantly; the hero glides
        with the shrinking/growing band instead of jumping. */
-    margin: calc(var(--banner-h) - 15dvh) auto;
+    margin: calc(var(--banner-h) - 10dvh) auto;
     padding: 0 1.5rem;
     /* Same params as .site-banner's height transition (BaseLayout) so the
        hero tracks the band edge exactly; translate is compositor-driven,
@@ -83,22 +83,18 @@ const recent = await getRecentPosts(6);
   }
 
   .hero {
-    background-color: color-mix(in srgb, var(--color-base) 60%, transparent);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    background-color: var(--color-base);
     padding: 3rem;
     margin-bottom: 4rem;
     border-radius: var(--radius-3xl);
     box-shadow: var(--shadow-card);
 
     transition:
-      transform 0.4s var(--ease-bounce),
       box-shadow 0.4s var(--ease-spring), 
       background-color 0.4s var(--ease-spring);
   }
 
   .hero:hover {
-    transform: scale(1.02);
     box-shadow: var(--shadow-float);
   }
 
@@ -107,7 +103,7 @@ const recent = await getRecentPosts(6);
     font-size: 1.5rem;
     line-height: 1;
     font-weight: 600;
-    color: var(--color-accent);
+    color: var(--color-accent-mns);
     margin: 0rem 0.3rem 0.7rem;
   }
 
@@ -155,7 +151,7 @@ const recent = await getRecentPosts(6);
 
   .section-head a {
     font-size: 0.9rem;
-    color: var(--color-accent);
+    color: var(--color-accent-mns);
     text-decoration: none;
   }
 
@@ -169,6 +165,7 @@ const recent = await getRecentPosts(6);
     align-items: stretch;
   }
 
+  /* old deprecated */
   .old-card-list {
     list-style: none;
     margin: 0;
