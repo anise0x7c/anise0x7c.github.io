@@ -135,29 +135,34 @@
   --blue: #1e66f5;
   --lavender: #7287fd;
 
-  /* Neutral ramp — oklch(L C var(--hue)); L/C are the OKLCH decomposition
-     of the original Latte hexes, rounded to 2 decimals — the tonal ramp (and
-     the subtle chroma falloff text→base) is preserved; only hue rotates. */
-  --text: oklch(0.44 0.04 var(--hue));
-  --subtext1: oklch(0.49 0.04 var(--hue));
-  --subtext0: oklch(0.55 0.03 var(--hue));
+  /* Neutral ramp — oklch(L C var(--hue)). L/C were originally the OKLCH
+     decomposition of the Catppuccin Latte hexes, then chroma was raised ~2-3x
+     along the whole ramp (M3-style gradient: tonal ladder kept, tint boosted)
+     so light surfaces no longer read flat gray. The tonal falloff
+     text→base is preserved; only hue rotates with the knob. */
+  --text: oklch(0.44 0.06 var(--hue));
+  --subtext1: oklch(0.49 0.06 var(--hue));
+  --subtext0: oklch(0.55 0.05 var(--hue));
 
-  --overlay2: oklch(0.6 0.03 var(--hue));
-  --overlay1: oklch(0.65 0.03 var(--hue));
-  --overlay0: oklch(0.71 0.02 var(--hue));
+  --overlay2: oklch(0.6 0.05 var(--hue));
+  --overlay1: oklch(0.65 0.05 var(--hue));
+  --overlay0: oklch(0.71 0.04 var(--hue));
 
-  --surface2: oklch(0.76 0.02 var(--hue));
-  --surface1: oklch(0.81 0.02 var(--hue));
-  --surface0: oklch(0.86 0.01 var(--hue));
+  --surface2: oklch(0.76 0.04 var(--hue));
+  --surface1: oklch(0.81 0.04 var(--hue));
+  --surface0: oklch(0.86 0.03 var(--hue));
 
-  --base: oklch(0.96 0.01 var(--hue));
-  --mantle: oklch(0.93 0.01 var(--hue));
-  --crust: oklch(0.91 0.01 var(--hue));
+  --base: oklch(0.96 0.02 var(--hue));
+  --mantle: oklch(0.93 0.02 var(--hue));
+  --crust: oklch(0.91 0.02 var(--hue));
 
   /* Accent family (independent of Catppuccin) — oklch(L C var(--hue)), sits
-     directly on the knob. L/C kept from the original brand pink #ff6b8d. */
-  --accent: oklch(0.72 0.18 var(--hue));
-  --accent-strong: oklch(0.75 0.16 var(--hue));
+     directly on the knob. Reworked M3-style: light mode uses a mid-dark
+     primary (L 0.60, was 0.72/0.18 — the old high-L high-C combo read as
+     neon), and accent-strong flips to the darker hover tone (M3 tone 30),
+     while dark mode stays on the lighter hover direction (tone 90). */
+  --accent: oklch(0.6 0.16 var(--hue));
+  --accent-strong: oklch(0.52 0.16 var(--hue));
   --accent-contrast: oklch(0.98 0.01 var(--hue));
   --accent-soft: color-mix(in srgb, var(--accent) 14%, transparent);
 
@@ -197,27 +202,29 @@
   --blue: #89b4fa;
   --lavender: #b4befe;
 
-  /* Neutral ramp — L/C from the original Mocha hexes, rounded to 2 decimals */
-  --text: oklch(0.88 0.04 var(--hue));
-  --subtext1: oklch(0.82 0.04 var(--hue));
-  --subtext0: oklch(0.75 0.04 var(--hue));
+  /* Neutral ramp — L/C from the original Mocha hexes, with a small chroma
+     harmonization (+0.01) to match the boosted light ramp; tone ladder kept. */
+  --text: oklch(0.88 0.05 var(--hue));
+  --subtext1: oklch(0.82 0.05 var(--hue));
+  --subtext0: oklch(0.75 0.05 var(--hue));
 
-  --overlay2: oklch(0.69 0.04 var(--hue));
-  --overlay1: oklch(0.62 0.04 var(--hue));
-  --overlay0: oklch(0.55 0.03 var(--hue));
+  --overlay2: oklch(0.69 0.05 var(--hue));
+  --overlay1: oklch(0.62 0.05 var(--hue));
+  --overlay0: oklch(0.55 0.04 var(--hue));
 
-  --surface2: oklch(0.48 0.03 var(--hue));
-  --surface1: oklch(0.4 0.03 var(--hue));
-  --surface0: oklch(0.32 0.03 var(--hue));
+  --surface2: oklch(0.48 0.04 var(--hue));
+  --surface1: oklch(0.4 0.04 var(--hue));
+  --surface0: oklch(0.32 0.04 var(--hue));
 
-  --base: oklch(0.24 0.03 var(--hue));
-  --mantle: oklch(0.22 0.03 var(--hue));
-  --crust: oklch(0.18 0.02 var(--hue));
+  --base: oklch(0.24 0.04 var(--hue));
+  --mantle: oklch(0.22 0.04 var(--hue));
+  --crust: oklch(0.18 0.03 var(--hue));
 
   /* Accent family — same knob hue as light mode, Mocha's softer L/C
-     (light/dark differ in tone, not hue). */
-  --accent: oklch(0.88 0.06 var(--hue));
-  --accent-strong: oklch(0.91 0.05 var(--hue));
+     (light/dark differ in tone, not hue). Dark primary follows M3 tone-80:
+     slightly higher chroma than before, hover stays on the lighter side. */
+  --accent: oklch(0.86 0.09 var(--hue));
+  --accent-strong: oklch(0.9 0.07 var(--hue));
   --accent-contrast: oklch(0.26 0.06 var(--hue));
   --accent-soft: color-mix(in srgb, var(--accent) 16%, transparent);
 

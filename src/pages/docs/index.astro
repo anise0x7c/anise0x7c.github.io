@@ -1,32 +1,13 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import PageContainer from "../../components/PageContainer.astro";
 
 ---
 
 <BaseLayout>
-  <section class="container temp">
-    <h1>呜 ... 施工中 🚧</h1>
-    <p>嗯？不对，就算施工好了我也没什么东西可以有文档啊 🤔</p>
-  </section>
+  <PageContainer
+    title="呜 ... 施工中 🚧"
+    subtitle="嗯？不对，就算施工好了我也没什么东西可以有文档啊 🤔"
+    variant="overlap"
+  />
 </BaseLayout>
-
-
-
-<style>
-  .container {
-    max-width: var(--container-page);
-    margin: 0 auto;
-    padding: 0 1.25rem;
-  }
-
-  .temp {
-    /* Start below the site-wide banner band (.site-bg in BaseLayout). */
-    margin: calc(var(--banner-h) + 3rem) auto;
-  }
-
-  .temp h1 {
-    font-size: clamp(2rem, 5vw, 2.8rem);
-    font-weight: 600;
-    margin-bottom: 2rem;
-  }
-</style>

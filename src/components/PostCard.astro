@@ -64,16 +64,18 @@ const { title, description, pubDate, tags, cover, draft } = post.data;
     z-index: 3;
     border-radius: inherit;
     pointer-events: none;
-    transition: box-shadow 0.4s var(--ease-spring);
+    box-shadow: inset 0 0 0 1px var(--color-overlay0);
+    opacity: 0;
+
+    transition: opacity 0.4s var(--ease-spring);
   }
 
   .card:hover {
-    /* transform:scale(1.02); */
     box-shadow: var(--shadow-float);
   }
 
   .card:hover::after {
-    box-shadow: inset 0 0 0 1px var(--color-overlay0);
+    opacity: 1;
   }
 
   .cover {
@@ -87,13 +89,17 @@ const { title, description, pubDate, tags, cover, draft } = post.data;
     object-fit: cover;
     width: 100%;
     height: 100%;
+    filter: blur(5px);
+    transform: scale(1.03);
   }
 
   .cover-scrim {
     position: absolute;
     inset: 0;
     z-index: 1;
-    background: color-mix(in srgb, var(--color-base) 75%, transparent);
+    background: color-mix(in srgb, var(--color-base) 70%, transparent);
+    border-radius: inherit;
+    box-shadow: inset 0 0 0 1px var(--color-surface0);
   }
 
   .card-inner {
@@ -103,7 +109,7 @@ const { title, description, pubDate, tags, cover, draft } = post.data;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    padding: 2.5rem;
+    padding: 2rem 2.5rem;
     border-radius: inherit;
   }
 

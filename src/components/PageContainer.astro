@@ -1,0 +1,84 @@
+---
+interface Props {
+  /** "default" clears the sticky banner fully; "overlap" rises 10dvh into it
+      (home-page style) and glides with the taller home banner on nav. */
+  variant?: "default" | "overlap";
+  class?: string;
+  /** Optional page heading — renders a shared .page-head block above the
+      slot. Omit for pages that carry their own heading (e.g. home's hero). */
+  title?: string;
+  subtitle?: string;
+}
+
+const {
+  variant = "default",
+  class: className,
+  title,
+  subtitle,
+} = Astro.props;
+---
+
+<div class:list={[
+  "page-container", variant === "overlap" && "is-overlap", className
+]}>
+  {title && (
+    <header class="page-head">
+      <h1>{title}</h1>
+      {subtitle && <p>{subtitle}</p>}
+    </header>
+  )}
+  <slot />
+</div>
+
+<style>
+  .page-container {
+    max-width: var(--container-page);
+    margin-inline: auto;
+    padding-inline: 1.5rem;
+    /* Clear the sticky banner band; bottom spacing belongs to the Footer. */
+    margin-top: var(--banner-h);
+  }
+
+  /* Home-page overlap: rise 10dvh into the banner, then let the taller
+     (desktop) home banner's extra height glide via translate on navigation —
+     the same mechanism the old .components used, so the hero doesn't jump. */
+  .page-container.is-overlap {
+    margin-top: calc(var(--banner-h) - 10dvh);
+    transition: translate 0.4s var(--ease-enter);
+  }
+
+  @media (min-width: 1024px) {
+    body.is-home .page-container.is-overlap {
+      translate: 0 calc(var(--banner-h-home) - var(--banner-h));
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .page-container.is-overlap {
+      transition: none;
+    }
+  }
+
+  .page-head {
+    /* Mantle chip (same treatment as the home "recent posts" section head)
+       keeps the title readable where the page content overlaps the banner. */
+    background-color: var(--color-base);
+    box-shadow: var(--shadow-card);
+    border-radius: var(--radius-3xl);
+    padding: 2.5rem 3rem;
+    margin-bottom: 2rem;
+  }
+
+  .page-head h1 {
+    font-size: clamp(2rem, 5vw, 2.8rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin: 0;
+  }
+
+  .page-head p {
+    margin: 0.5rem 0 0;
+    color: var(--color-subtext1);
+    font-size: 1.05rem;
+  }
+</style>

@@ -8,12 +8,12 @@
 全站颜色 = **公式**,不是值:
 
 ```css
---text:    oklch(0.44 0.04 var(--hue));   /* 中性色:hue = 旋钮 */
---accent:  oklch(0.72 0.18 var(--hue));   /* accent:直接取旋钮 hue,无偏移 */
+--text:    oklch(0.44 0.06 var(--hue));   /* 中性色:hue = 旋钮 */
+--accent:  oklch(0.60 0.16 var(--hue));   /* accent:直接取旋钮 hue,无偏移 */
 ```
 
 - **一个旋钮**(`--hue`,0–360 无单位数字)驱动全部颜色(中性色 + accent),明暗两套共享
-- 中性色(text→crust 梯度)直接取旋钮 hue;L/C 为原 Catppuccin hex 的 OKLCH 分解(四舍五入 2 位)→ 色阶/彩度梯度保留
+- 中性色(text→crust 梯度)直接取旋钮 hue;L 阶梯与 Catppuccin 一致,但 **C 按 M3 风格整体提升约 2–3x**(亮色表面从 0.01→0.02~0.03,text 0.04→0.06),避免亮色表面读起来发灰
 - accent 家族含 4 个 token:`--accent 主色 / -strong(hover 强化) / -contrast(反白文字) / -soft(低透明度底)`
 - 浏览器在渲染时对公式求值 → 改一个变量,全站重算;`global.css` 的全局 `transition` 让变化"流"过去
 
@@ -65,6 +65,7 @@ document.documentElement.style.setProperty("--hue", 250);  // 只看不存
 
 ## 六、历史取舍记录
 
+- **M3 彩度/明暗重构(2026-08)**:亮色表面 chroma 按 Material Design 渐变整体提升 2–3x(表面不再发灰);亮色 accent 从 `oklch(0.72 0.18)` 降到 `oklch(0.60 0.16)` 消除霓虹感(按钮白字对比 ≈4.2:1,正文链接过 AA),`-strong` hover 方向在亮色翻转为**更深**(M3 tone 30)而暗色保持**更亮**(tone 90);暗色 accent 略提彩度(0.88/0.06→0.86/0.09)。亮色中性色因此不再是 Catppuccin hex 的纯分解,而是 M3 式彩度增强后的取值。
 - **accent 体系演进**:初版独立品牌粉(`#ff6b8d` 家族,单 hue=旋钮)→ MD3 tertiary 思路重构为 `accent-pls`(+60)/ `accent-mns`(−60)双家族 → 因相同 C 在不同色相下"扎眼程度"差异显著(蓝紫 124% 越界 vs 绿 79% 余量),最终简化退回**单 accent 家族**(不偏移)。
 - **中性色底调**:原 Catppuccin 中性色天然 hue≈264–284°(冷蓝),统一到旋钮后底调随旋钮走。若想恢复冷蓝底调,把中性色公式里的 `var(--hue)` 改成 `calc(var(--hue) + 274deg)`(仅中性色行)——不推荐,破坏"一钮控全站"的整体感。
 

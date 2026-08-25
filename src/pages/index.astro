@@ -4,12 +4,13 @@ import { SITE } from "../consts";
 import { getRecentPosts } from "../utils/posts";
 import PostCard from "../components/PostCard.astro";
 import ThemedButton from "../components/ThemedButton.astro";
+import PageContainer from "../components/PageContainer.astro";
 
 const recent = await getRecentPosts(6);
 ---
 
 <BaseLayout>
-  <div class="components">
+  <PageContainer variant="overlap">
     <section class="hero">
       <p class="eyebrow">Hello there!</p>
       <h1 class="title">Welcome to 80ml Spice Jar</h1>
@@ -48,45 +49,18 @@ const recent = await getRecentPosts(6);
         </li>))}
       </ul>
     </section>)}
-  </div>
+  </PageContainer>
 </BaseLayout>
 
 
 
 <style>
-  .components {
-    max-width: var(--container-page);
-    /* Base offset = regular band height − 20dvh overlap. The home-page
-       extra height is applied as an animated translate (below), mirroring
-       how the banner itself animates its height — so when body.is-home
-       flips on navigation, nothing relayouts instantly; the hero glides
-       with the shrinking/growing band instead of jumping. */
-    margin: calc(var(--banner-h) - 10dvh) auto;
-    padding: 0 1.5rem;
-    /* Glide the translate in lock-step with the banner's height morph. */
-    transition: translate 0.4s var(--ease-enter);
-  }
-
-  @media (min-width: 1024px) {
-    body.is-home .components {
-      /* +30dvh on desktop home (65 − 35), matching --banner-h-home */
-      translate: 0 calc(var(--banner-h-home) - var(--banner-h));
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .components {
-      transition: none;
-    }
-  }
-
   .hero {
     background-color: var(--color-base);
     padding: 3rem;
     margin-bottom: 4rem;
     border-radius: var(--radius-3xl);
     box-shadow: var(--shadow-card);
-
     transition: box-shadow 0.4s var(--ease-spring);
   }
 
