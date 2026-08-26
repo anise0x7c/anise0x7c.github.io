@@ -3,6 +3,7 @@ import type { MarkdownHeading } from "astro";
 import { Image } from "astro:assets";
 import type { Post } from "../utils/posts";
 import BaseLayout from "./BaseLayout.astro";
+import PageContainer from "../components/PageContainer.astro";
 import FormattedDate from "../components/FormattedDate.astro";
 
 interface Props {
@@ -13,83 +14,74 @@ interface Props {
 const { post, headings = [] } = Astro.props;
 const { title, description, pubDate, updatedDate, tags, cover, draft } = post.data;
 const tocItems = headings.filter((h) => h.depth >= 2 && h.depth <= 3);
-const hasToc = tocItems.length > 0;
 ---
 
 <BaseLayout title={title} description={description}>
-  <article
-    class="post"
-    class:list={{ "has-toc": hasToc }}
-    data-pagefind-body
-  >
-    <header class="post-header">
-      {
-        cover && (
-          <div class="post-cover">
-            <Image src={cover} alt="" width={1200} height={675} />
-          </div>
-        )
-      }
-      <div class="meta-row">
-        <span class="date">
-          {import.meta.env.DEV && draft && (<span>🚧 - </span>)}
-          <FormattedDate date={pubDate} />
-        </span>
-        {
-          updatedDate && (
-            <span class="updated">
-              (updated <FormattedDate date={updatedDate} />)
-            </span>
-          )
-        }
+  <PageContainer>
+  <article class="post" data-pagefind-body>
+    <!-- cover -->
+    { cover && (
+      <div class="post-cover">
+        <Image src={cover} alt="" width={1200} height={675} class="cover-img"/>
       </div>
-      <h1>{title}</h1>
-      {
-        tags.length > 0 && (
-          <ul class="tags" data-pagefind-ignore>
-            {tags.map((tag) => (
-              <li>
-                <span class="chip">#{tag}</span>
-              </li>
-            ))}
-          </ul>
-        )
-      }
-      <p class="lead">{description}</p>
-    </header>
-
-    <div class="post-body" class:list={{ "with-toc": hasToc }}>
+    )}
+    <!-- meta and draft indicator -->
+    <div class="meta-row">
+      <span class="date">
+        {import.meta.env.DEV && draft && (<span>🚧 - </span>)}
+        <FormattedDate date={pubDate} />
+      </span>
+      { updatedDate && (
+        <span class="updated">
+          (updated <FormattedDate date={updatedDate} />)
+        </span>
+      )}
+    </div>
+    <!-- title -->
+    <h1>{title}</h1>
+    <!-- tags -->
+    { tags.length > 0 && (
+      <ul class="tags" data-pagefind-ignore>
+        {tags.map((tag) => (
+          <li> <span class="chip">#{tag}</span> </li>
+        ))}
+      </ul>
+    )}
+    <!-- discription -->
+    <p class="lead">{description}</p>
+    <!-- prose and toc -->
+    <div class="post-text">
       <div class="prose">
         <slot />
       </div>
-      {
-        hasToc && (
-          <aside class="toc" aria-label="Table of contents" data-pagefind-ignore>
-            <p class="toc-title">On this page</p>
-            <nav>
-              <ul>
-                {tocItems.map((h) => (
-                  <li class:list={["toc-item", { indent: h.depth === 3 }]}>
-                    <a href={`#${h.slug}`}>{h.text}</a>
-                  </li>
-                ))}
-              </ul>
-            </nav>
-          </aside>
-        )
-      }
+      { tocItems.length > 0 && (
+        <aside class="toc" aria-label="Table of contents" data-pagefind-ignore>
+          <nav>
+            <ul>
+              {tocItems.map((item) => (
+                <li class:list={["toc-item", { indent: item.depth === 3 }]}>
+                  <a href={`#${item.slug}`}>{item.text}</a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </aside>
+      )}
     </div>
 
-    <footer class="post-footer" data-pagefind-ignore>
+    <div class="post-footer" data-pagefind-ignore>
       <a href="/blogs">&larr; Back to all posts</a>
-    </footer>
+    </div>
   </article>
+  </PageContainer>
 </BaseLayout>
 
+
+
 <script>
-  // TOC scroll-spy. This module script is only present on post pages, where
-  // it runs after DOM parse on full loads. On swup navigations the head is
-  // synced with the incoming page's <script> tags — a module script added
+  // TOC scroll-spy. Rendered only when the post has headings; this module
+  // script runs after DOM parse on full loads. On swup navigations the head
+  // is synced with the incoming page's <script> tags — a module script added
   // mid-session executes once and registers the astro:page-load listener
   // (@swup/astro re-dispatches it on page:view), re-attaching the observer
   // to each freshly swapped document. The disconnect guard makes repeated
@@ -105,9 +97,7 @@ const hasToc = tocItems.length > 0;
     const links = Array.from(toc.querySelectorAll<HTMLAnchorElement>("a"));
     const linkMap = new Map<Element, HTMLAnchorElement>();
     for (const link of links) {
-      const id = decodeURIComponent(
-        (link.getAttribute("href") ?? "").slice(1),
-      );
+      const id = decodeURIComponent((link.getAttribute("href") ?? "").slice(1));
       const target = document.getElementById(id);
       if (target) linkMap.set(target, link);
     }
@@ -138,34 +128,25 @@ const hasToc = tocItems.length > 0;
   document.addEventListener("astro:page-load", setupToc);
 </script>
 
+
+
 <style>
   .post {
-    max-width: var(--container-prose);
-    margin-inline: auto;
-    /* Start below the site-wide banner band (.site-bg in BaseLayout). */
-    padding: calc(var(--banner-h) + 1.5rem) 1.25rem 4rem;
-  }
-
-  /* On wide screens, give the article page a wider shell so the body + TOC
-     can sit side by side. Below `lg` it collapses to the prose measure. */
-  @media (min-width: 1024px) {
-    .post.has-toc {
-      max-width: var(--container-article);
-    }
-  }
-
-  .post-header {
-    margin-bottom: 2.5rem;
+    /* Full-width card spanning the container (matches the page-head cards) */
+    background-color: var(--color-base);
+    box-shadow: var(--shadow-card);
+    border-radius: var(--radius-3xl);
+    padding: 2.5rem 3rem;
   }
 
   .post-cover {
     aspect-ratio: 16 / 9;
     overflow: hidden;
-    border-radius: var(--radius-lg);
+    border-radius: var(--radius-xl);
     margin-bottom: 1.5rem;
   }
 
-  .post-cover :global(img) {
+  .cover-img {
     display: block;
     width: 100%;
     height: 100%;
@@ -181,7 +162,7 @@ const hasToc = tocItems.length > 0;
     color: var(--color-subtext0);
   }
 
-  .post-header h1 {
+  .post h1 {
     font-size: clamp(1.9rem, 4vw, 2.6rem);
     font-weight: 800;
     line-height: 1.15;
@@ -194,6 +175,9 @@ const hasToc = tocItems.length > 0;
     color: var(--color-subtext1);
     margin: 1rem 0 0;
     line-height: 1.6;
+    padding: 1rem 0;
+    margin-bottom: 1rem ;
+    border-bottom: dashed 2px var(--color-overlay0);
   }
 
   .tags {
@@ -205,40 +189,35 @@ const hasToc = tocItems.length > 0;
     padding: 0;
   }
 
-  .post-body {
-    display: block;
+  .post-text {
+    display: flex;
+    gap: 2rem;
   }
 
-  @media (min-width: 1024px) {
-    .post-body.with-toc {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) 15rem;
-      gap: 3rem;
-      align-items: start;
-    }
+  .prose {
+    flex: 1;
+    min-width: 0;
   }
 
-  /* Table of contents sidebar */
+  /* TOC: hidden below lg; a sticky right column of .post-grid above. It is
+     part of the page content (in the swup swap container), which is safe —
+     sticky anchors to the viewport scrollport, and the animated page wrapper
+     ends every transition at translateY(0) ≡ identity, so there is no jump.
+     No own background/shadow — the TOC sits inside the .post card, which
+     already carries the base surface + shadow. */
   .toc {
     display: none;
   }
 
-  @media (min-width: 1024px) {
-    .post-body.with-toc .toc {
+  @media (min-width: 64rem) /* = --breakpoint-lg (1024px) */ {
+    .toc {
       display: block;
       position: sticky;
-      top: 4.5rem;
-      max-height: calc(100vh - 6rem);
+      flex-shrink: 0;
+      top: 10dvh;
+      max-height: calc(100dvh - 10dvh - 1.5rem);
       overflow-y: auto;
     }
-  }
-
-  .toc-title {
-    font-family: var(--font-display);
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: var(--color-text);
-    margin: 0 0 0.5rem;
   }
 
   .toc ul {

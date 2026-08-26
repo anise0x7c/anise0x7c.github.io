@@ -3,8 +3,9 @@
 
   Swup drives navigation as two sequential phases and waits for CSS
   animations to finish on elements matching the animationSelector
-  (`[class*="transition-swup-"]`, see astro.config.mjs — the class lives on
-  <main> in BaseLayout):
+  (`[class*="transition-swup-"]`, see astro.config.mjs). The page wrapper
+  (`transition-swup-page`, an inner div in BaseLayout's <main>) carries it;
+  the sticky TOC lives inside the page content and simply glides with it:
 
     visit:start  → html.is-changing + is-animating + is-leaving   (out phase)
     swap <main>  → html.is-rendering                              (in phase)

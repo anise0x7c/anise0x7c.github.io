@@ -534,7 +534,7 @@
     color: var(--color-accent-strong);
   }
 
-  @media (max-width: 640px) {
+  @media (max-width: 40rem) {
     .palette-tool {
       padding: 1.5rem;
     }

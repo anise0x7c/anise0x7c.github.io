@@ -8,11 +8,7 @@ const posts = await getPublishedPosts();
 ---
 
 <BaseLayout title="Blog" description="All posts, newest first.">
-  <PageContainer 
-    title="The Blog"
-    subtitle="Everything I've written, newest first."
-    variant="overlap"
-  >
+  <PageContainer title="The Blog" subtitle="Everything I've written, newest first.">
     {
       posts.length === 0 ? (
         <p class="empty">

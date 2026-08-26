@@ -21,4 +21,4 @@ export const POSTS_PER_PAGE = 10;
 // ramp + accent, both at the knob hue) is derived from this — see
 // src/styles/themes.css and docs/color-system.md. Changing it re-tints the
 // entire site (both modes).
-export const DEFAULT_HUE = 215;
+export const DEFAULT_HUE = 200;

@@ -111,12 +111,19 @@ const isHome = Astro.url.pathname === "/";
       />
     </div>
     <Header />
-    <!-- Swup swap container + animation anchor: the `transition-swup-*` class
-         is what swup awaits (see animationClass in astro.config.mjs); the
-         out/in animations are bound to html.is-leaving / is-rendering in
-         styles/animations.css. -->
-    <main class="transition-swup-page">
-      <slot />
+    <!-- Swup swap container + animation anchor: swup swaps the whole <main>;
+         the `transition-swup-*` class lives on an inner wrapper (NOT on
+         <main>) so page transitions never put a transform on <main> itself —
+         a transformed ancestor would re-anchor fixed/sticky descendants.
+         The sticky TOC lives inside the page content now (a right column of
+         the post body); that is safe — sticky anchors to the viewport
+         scrollport, and the wrapper ends every animation at translateY(0) ≡
+         identity, so there is no jump. Out/in animations are bound to
+         html.is-leaving / is-rendering in styles/animations.css. -->
+    <main>
+      <div class="transition-swup-page">
+        <slot />
+      </div>
     </main>
     <Footer />
   </body>
@@ -161,7 +168,7 @@ const isHome = Astro.url.pathname === "/";
     --banner-h-effective: var(--banner-h);
   }
 
-  @media (min-width: 1024px) {
+  @media (min-width: 64rem) {
     body.is-home {
       --banner-h-effective: var(--banner-h-home);
     }

@@ -1,8 +1,5 @@
 ---
 interface Props {
-  /** "default" clears the sticky banner fully; "overlap" rises 10dvh into it
-      (home-page style) and glides with the taller home banner on nav. */
-  variant?: "default" | "overlap";
   class?: string;
   /** Optional page heading — renders a shared .page-head block above the
       slot. Omit for pages that carry their own heading (e.g. home's hero). */
@@ -11,16 +8,13 @@ interface Props {
 }
 
 const {
-  variant = "default",
   class: className,
   title,
   subtitle,
 } = Astro.props;
 ---
 
-<div class:list={[
-  "page-container", variant === "overlap" && "is-overlap", className
-]}>
+<div class:list={["page-container", className]}>
   {title && (
     <header class="page-head">
       <h1>{title}</h1>
@@ -35,26 +29,22 @@ const {
     max-width: var(--container-page);
     margin-inline: auto;
     padding-inline: 1.5rem;
-    /* Clear the sticky banner band; bottom spacing belongs to the Footer. */
-    margin-top: var(--banner-h);
-  }
-
-  /* Home-page overlap: rise 10dvh into the banner, then let the taller
-     (desktop) home banner's extra height glide via translate on navigation —
-     the same mechanism the old .components used, so the hero doesn't jump. */
-  .page-container.is-overlap {
+    /* Rise 10dvh into the sticky banner band by default; bottom spacing
+       belongs to the Footer. */
     margin-top: calc(var(--banner-h) - 10dvh);
+    /* Glide with the (taller, desktop) home banner on navigation — inert on
+       regular pages, where translate never changes. */
     transition: translate 0.4s var(--ease-enter);
   }
 
-  @media (min-width: 1024px) {
-    body.is-home .page-container.is-overlap {
+  @media (min-width: 64rem) {
+    body.is-home .page-container {
       translate: 0 calc(var(--banner-h-home) - var(--banner-h));
     }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .page-container.is-overlap {
+    .page-container {
       transition: none;
     }
   }

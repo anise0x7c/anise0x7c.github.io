@@ -25,7 +25,7 @@
   --radius-3xl: 3.5rem;
   --radius-pill: 999px;
 
-  /* layouts — generates max-w-page / max-w-article / max-w-prose utilities */
+  /* layouts — generates max-w-page / max-w-prose utilities */
   --container-page: 72rem; /* 页面整体宽度上限 (Header / Footer / list pages) */
   --container-article: 64rem; /* 文章 + 侧栏 (TOC) 并排时宽度上限 */
   --container-prose: 44rem; /* 正文可读行宽上限 (~66-70 字/行) */
@@ -39,6 +39,15 @@
   */
   --banner-h: 35dvh;
   --banner-h-home: 60dvh;
+
+  /* Site responsive breakpoints — the single source of truth. Tailwind's
+     lg: / max-sm: variants derive from these, and raw @media queries in
+     components use the matching rem literals below (var() cannot be used in
+     media query conditions). Keep both in sync when changing a value. */
+  --breakpoint-sm: 40rem; /* 640px */
+  --breakpoint-md: 48rem; /* 768px */
+  --breakpoint-lg: 64rem; /* 1024px */
+  --breakpoint-xl: 80rem; /* 1280px */
 }
 
 
@@ -117,7 +126,7 @@
      script in BaseLayout.astro sets it as an inline style on <html>
      (localStorage > default), which wins the cascade and, because swup never
      replaces <html>, survives every client-side navigation. */
-  --hue: 215;
+  --hue: 200;
 
   /* Chromatic accents — Catppuccin Latte, deliberately NOT hue-linked */
   --rosewater: #dc8a78;

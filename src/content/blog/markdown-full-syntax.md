@@ -1,9 +1,11 @@
 ---
-title: "Markdown 全语法渲染测试"
-description: "一篇覆盖几乎所有 Markdown / GFM 语法的测试博文：标题、强调、链接、列表、任务清单、代码高亮、表格、脚注、内联 HTML 与各种边角案例。"
-pubDate: 2026-08-23
-tags: ["meta", "markdown"]
-draft: false
+title: Markdown 全语法渲染测试
+description: 一篇覆盖几乎所有 Markdown / GFM 语法的测试博文：标题、强调、链接、列表、任务清单、代码高亮、表格、脚注、内联 HTML 与各种边角案例。
+pubDate: '2026-08-23'
+tags:
+  - meta
+  - markdown
+draft: true
 ---
 
 这是一篇**渲染压力测试**博文：把 Markdown / GFM 的语法全家桶塞进一篇文章里，
@@ -264,7 +266,7 @@ aaaaaaaaaa|bbbbbbbbbb|cccccccccc|ddddddddbb|eeeeeeeeee|ffffffffff|gggggggggg|hhh
 
 相对路径本地图（会被 Astro 自动优化为 webp）：
 
-![本地图片](/src/assets/images/chasing-color-hrz.webp)
+![本地图片](/src/assets/images/chasing-color-hrz.jpg)
 
 远程图片（不会被优化，仅测试外链渲染）：
 
