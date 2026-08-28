@@ -96,6 +96,8 @@ export default defineConfig({
   },
 
   vite: {
-    plugins: [tailwindcss()]
+    plugins: [tailwindcss()],
+    //default Lightning CSS may put wrong backdrop filter in build production
+    build: { cssMinify: 'esbuild' }, 
   }
 });
