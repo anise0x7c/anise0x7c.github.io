@@ -46,6 +46,8 @@ export default defineConfig({
     pagefind(),
   ],
 
+  site: 'https://anise0x7c.github.io',
+
   // Self-hosted web fonts: downloaded at build time from Google and bundled
   // into ./dist — visitors never connect to fonts.googleapis.com.
   fonts: [
