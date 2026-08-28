@@ -25,6 +25,11 @@
   --radius-3xl: 3.5rem;
   --radius-pill: 999px;
 
+  /* Code block panel — a dark surface fixed across light/dark (L 0.2, near
+     achromatic, faintly tinted by --hue). Consumed by .prose pre with
+     !important to override Shiki's inline background. */
+  --code: oklch(0.2 0.02 var(--hue));
+
   /* layouts — generates max-w-page / max-w-prose utilities */
   --container-page: 72rem; /* 页面整体宽度上限 (Header / Footer / list pages) */
   --container-article: 64rem; /* 文章 + 侧栏 (TOC) 并排时宽度上限 */
@@ -101,6 +106,12 @@
   --color-base: var(--base);
   --color-mantle: var(--mantle);
   --color-crust: var(--crust);
+
+  /* Code panel — mode-fixed: --code is defined once in the static @theme
+     block above and never overridden in .dark, so bg-code & co. stay the
+     same dark surface in both themes. Utilities: bg-code / text-code /
+     border-code / … */
+  --color-code: var(--code);
 
   /* Independent site accent — oklch(L C var(--hue)), follows the knob
      directly (no hue offset). Utilities: bg-accent / text-accent-strong / … */

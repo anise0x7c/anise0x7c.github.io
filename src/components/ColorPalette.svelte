@@ -43,6 +43,7 @@
         { name: "base", cssVar: "--color-base" },
         { name: "mantle", cssVar: "--color-mantle" },
         { name: "crust", cssVar: "--color-crust" },
+        { name: "code", cssVar: "--color-code" },
       ],
     },
     {
@@ -192,7 +193,8 @@
     <div id="palette-body" class="palette-body" transition:slide={{ duration: reducedMotion ? 0 : 250 }}>
       <p class="tool-desc">
         全部颜色由 <code>--hue</code> 旋钮驱动（中性色 + accent 均为
-        oklch 公式），并跟随当前主题（浅/深）实时变化。拖动滑块即时重染全站，点击色块复制颜色值。
+        oklch 公式），并跟随当前主题（浅/深）实时变化。唯一例外：
+        <code>code</code> 面板色明暗固定。拖动滑块即时重染全站，点击色块复制颜色值。
       </p>
 
       <div class="toolbar">

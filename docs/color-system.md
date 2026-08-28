@@ -59,6 +59,7 @@ document.documentElement.style.setProperty("--hue", 250);  // 只看不存
 | 14 个 Catppuccin 彩色(red/green/sky/mauve…) | 保留静态 hex(**已无消费点**) | 早期 `stickerColor()` 的 tag 贴纸色;贴纸体系已移除,此族暂留备用 |
 | tag chip | 统一 `accent` 背景 + `accent-contrast` 文字 | 所有 tag 同色,随旋钮走;-contrast token 自动翻转明暗,无需 `.dark` 覆盖 |
 | lqdglass 阴影的白色 inset | 静态 | 设计上就是白高光 |
+| 代码块面板 `--code` / `--color-code` | `oklch(0.2 0.02 var(--hue))`,明暗固定 | Shiki github-dark token 为浅字深底,两模式通用;工具类 `bg-code` 等随用随生成 |
 | `--sh-sticky/card/float` | `color-mix(var(--text)/var(--crust) …%)` | 阴影本色=最深中性色,自动跟随 |
 | accent `-soft` | `color-mix(var(--accent) N%, transparent)` | 由主色派生(亮 14% / 暗 16%) |
 | 超出 sRGB 色域的组合(高 C + 特定 hue) | 浏览器自动 gamut map(降彩度) | OKLCH 表达范围 > sRGB,属预期行为 |

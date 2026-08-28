@@ -9,6 +9,11 @@ import tailwindcss from '@tailwindcss/vite';
 
 import pagefind from 'astro-pagefind';
 
+import { satteri } from '@astrojs/markdown-satteri';
+
+import { sectionize } from './src/plugins/sectionize';
+import { alerts } from './src/plugins/alerts';
+
 
 // https://astro.build/config
 export default defineConfig({
@@ -76,6 +81,17 @@ export default defineConfig({
       styles: ['normal'],
     },
   ],
+
+  // Sectionize posts: every heading and its following content become a
+  // <section> (deeper headings nested inside shallower ones). The TOC
+  // scroll-spy observes these sections as "current paragraph" containers.
+  // Alerts first: GitHub-style [!NOTE] blockquotes become styled divs before
+  // the content is regrouped into sections.
+  // Sätteri is Astro 7's default Markdown pipeline; mdastPlugins is its
+  // equivalent of the old remarkPlugins hook.
+  markdown: {
+    processor: satteri({ mdastPlugins: [alerts, sectionize] }),
+  },
 
   vite: {
     plugins: [tailwindcss()]

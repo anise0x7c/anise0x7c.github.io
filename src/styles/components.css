@@ -9,32 +9,64 @@
     line-height: 1.75;
     font-size: 1.05rem;
   }
-  .prose > * + * {
+  /* Sectionized posts (see src/plugins/sectionize) wrap each heading and its
+     content in a <section>. Paragraph gaps carry exactly one margin: it sits
+     on the section itself, sized by its heading level — the headings drop
+     their own margin-top entirely (a heading is always its section's first
+     child), so section/heading margins can never stack or depend on
+     collapsing. remark-gfm's footnotes section is excluded (it has its own
+     spacing below). */
+  .prose section:has(> h1) {
+    margin-top: 2.5em;
+  }
+  .prose section:has(> h2) {
+    margin-top: 2.5em;
+  }
+  .prose section:has(> h3) {
+    margin-top: 2em;
+  }
+  .prose section:has(> h4) {
+    margin-top: 2em;
+  }
+  .prose section:has(> h5) {
+    margin-top: 2em;
+  }
+  .prose section:has(> h6) {
+    margin-top: 2em;
+  }
+  .prose > * + *:not(section),
+  .prose section:not(.footnotes) > * + *:not(section) {
     margin-top: 1.25em;
   }
+
+  /* Headings carry no top margin: each always sits at the top of its own
+     section, which owns the gap (see the section margin rules above). */
   .prose h1,
   .prose h2,
   .prose h3,
-  .prose h4 {
+  .prose h4,
+  .prose h5,
+  .prose h6 {
     font-weight: 700;
     line-height: 1.3;
-    scroll-margin-top: 5rem;
   }
   .prose h1 {
-    font-size: 1.9em;
-    margin-top: 2.5em;
-    padding-bottom: 0.3em;
-    border-bottom: 1px dashed var(--color-overlay2);
+    font-size: 1.8em;
   }
   .prose h2 {
     font-size: 1.6em;
-    margin-top: 2em;
-    padding-bottom: 0.3em;
-    border-bottom: 1px dashed var(--color-overlay2);
   }
   .prose h3 {
     font-size: 1.3em;
-    margin-top: 1.6em;
+  }
+  .prose h4 {
+    font-size: 1.19em;
+  }
+  .prose h5 {
+    font-size: 1.09em;
+  }
+  .prose h6 {
+    font-size: 1em;
   }
   .prose a {
     color: var(--color-accent);
@@ -55,8 +87,10 @@
     border: 1px solid var(--color-overlay0);
   }
   .prose pre {
-    background: var(--color-mantle);
-    border: 1px solid var(--color-overlay0);
+    /* Shiki (astro-code) inlines background-color on the <pre>, so it takes
+       !important to win; the fixed --color-code panel surface is used instead
+       of the theme's crust. */
+    background: var(--color-code) !important;
     border-radius: var(--radius-lg);
     padding: 1rem 1.25rem;
     overflow-x: auto;
@@ -86,6 +120,73 @@
     bottom: 0;
     width: 0;
   }
+
+  /*
+    GitHub-style alerts (see src/plugins/alerts.ts): the plugin emits
+    <div class="alert alert-note" data-alert="note"> with an injected
+    <p class="alert-title"><strong>Note</strong></p>. Colours use the static
+    Catppuccin chromatic accents (kept around for exactly this):
+    note=blue, tip=green, important=mauve, warning=yellow, caution=red.
+    They are <div>s, not blockquotes, so the accent-soft blockquote styles
+    above never apply. Icons are primer/octicons 16px, rendered via
+    mask-image (coloured by the title's currentColor).
+  */
+  .prose .alert {
+    --alert-color: var(--color-blue);
+    --alert-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='black'%3E%3Cpath d='M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z'/%3E%3C/svg%3E");
+    margin-left: 0;
+    padding: 0.75em 1em;
+    border-left: 4px solid var(--alert-color);
+    border-radius: 0 var(--radius-md) var(--radius-md) 0;
+    background: color-mix(in srgb, var(--alert-color) 8%, transparent);
+    color: var(--color-text);
+  }
+  .prose .alert-tip {
+    --alert-color: var(--color-green);
+    --alert-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='black'%3E%3Cpath d='M8 1.5c-2.363 0-4 1.69-4 3.75 0 .984.424 1.625.984 2.304l.214.253c.223.264.47.556.673.848.284.411.537.896.621 1.49a.75.75 0 0 1-1.484.211c-.04-.282-.163-.547-.37-.847a8.456 8.456 0 0 0-.542-.68c-.084-.1-.173-.205-.268-.32C3.201 7.75 2.5 6.766 2.5 5.25 2.5 2.31 4.863 0 8 0s5.5 2.31 5.5 5.25c0 1.516-.701 2.5-1.328 3.259-.095.115-.184.22-.268.319-.207.245-.383.453-.541.681-.208.3-.33.565-.37.847a.751.751 0 0 1-1.485-.212c.084-.593.337-1.078.621-1.489.203-.292.45-.584.673-.848.075-.088.147-.173.213-.253.561-.679.985-1.32.985-2.304 0-2.06-1.637-3.75-4-3.75ZM5.75 12h4.5a.75.75 0 0 1 0 1.5h-4.5a.75.75 0 0 1 0-1.5ZM6 15.25a.75.75 0 0 1 .75-.75h2.5a.75.75 0 0 1 0 1.5h-2.5a.75.75 0 0 1-.75-.75Z'/%3E%3C/svg%3E");
+  }
+  .prose .alert-important {
+    --alert-color: var(--color-mauve);
+    --alert-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='black'%3E%3Cpath d='M0 1.75C0 .784.784 0 1.75 0h12.5C15.216 0 16 .784 16 1.75v9.5A1.75 1.75 0 0 1 14.25 13H8.06l-2.573 2.573A1.458 1.458 0 0 1 3 14.543V13H1.75A1.75 1.75 0 0 1 0 11.25Zm1.75-.25a.25.25 0 0 0-.25.25v9.5c0 .138.112.25.25.25h2a.75.75 0 0 1 .75.75v2.19l2.72-2.72a.749.749 0 0 1 .53-.22h6.5a.25.25 0 0 0 .25-.25v-9.5a.25.25 0 0 0-.25-.25Zm7 2.25v2.5a.75.75 0 0 1-1.5 0v-2.5a.75.75 0 0 1 1.5 0ZM9 9a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z'/%3E%3C/svg%3E");
+  }
+  .prose .alert-warning {
+    --alert-color: var(--color-yellow);
+    --alert-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='black'%3E%3Cpath d='M6.457 1.047c.659-1.234 2.427-1.234 3.086 0l6.082 11.378A1.75 1.75 0 0 1 14.082 15H1.918a1.75 1.75 0 0 1-1.543-2.575Zm1.763.707a.25.25 0 0 0-.44 0L1.698 13.132a.25.25 0 0 0 .22.368h12.164a.25.25 0 0 0 .22-.368Zm.53 3.996v2.5a.75.75 0 0 1-1.5 0v-2.5a.75.75 0 0 1 1.5 0ZM9 11a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z'/%3E%3C/svg%3E");
+  }
+  .prose .alert-caution {
+    --alert-color: var(--color-red);
+    --alert-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='black'%3E%3Cpath d='M4.47.22A.749.749 0 0 1 5 0h6c.199 0 .389.079.53.22l4.25 4.25c.141.14.22.331.22.53v6a.749.749 0 0 1-.22.53l-4.25 4.25A.749.749 0 0 1 11 16H5a.749.749 0 0 1-.53-.22L.22 11.53A.749.749 0 0 1 0 11V5c0-.199.079-.389.22-.53Zm.84 1.28L1.5 5.31v5.38l3.81 3.81h5.38l3.81-3.81V5.31L10.69 1.5ZM8 4a.75.75 0 0 1 .75.75v3.5a.75.75 0 0 1-1.5 0v-3.5A.75.75 0 0 1 8 4Zm0 8a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z'/%3E%3C/svg%3E");
+  }
+
+  .prose .alert > .alert-title {
+    display: flex;
+    align-items: center;
+    gap: 0.45em;
+    margin: 0 0 0.5em;
+    font-weight: 700;
+    color: var(--alert-color);
+  }
+  .prose .alert > .alert-title strong {
+    font-weight: 700;
+  }
+  .prose .alert .alert-title::before {
+    content: "";
+    flex-shrink: 0;
+    width: 1em;
+    height: 1em;
+    background-color: currentColor;
+    mask-image: var(--alert-icon);
+    -webkit-mask-image: var(--alert-icon);
+    mask-repeat: no-repeat;
+    -webkit-mask-repeat: no-repeat;
+    mask-position: center;
+    -webkit-mask-position: center;
+    mask-size: contain;
+    -webkit-mask-size: contain;
+  }
+  .prose .alert > p + p {
+    margin-top: 0.6em;
+  }
   .prose ul,
   .prose ol {
     padding-left: 1.5em;
@@ -110,6 +211,35 @@
   }
 
   /*
+    Tables — horizontal rules only (GitHub look): no vertical lines, just a
+    mantle header band with a strong underline and 1px row lines below.
+    display:block makes the table itself the scroll container for wide tables
+    (markdown can't wrap them in a div) — the same trick Docusaurus/VitePress
+    use. The radius clips the header band's corners.
+  */
+.prose table {
+  display: inline-block;
+  overflow-x: auto;
+  border-spacing: 0;
+  border-radius: var(--radius-md);
+  box-shadow: 0 0 0 1px var(--color-overlay0);
+}
+.prose th,
+.prose td {
+  padding: 1em 1.5em;
+}
+.prose thead th {
+  border-bottom: 1px solid var(--color-overlay0);
+  text-align: start;
+}
+.prose tbody tr {
+  border-bottom: 1px dashed var(--color-overlay0);
+}
+.prose tbody tr:last-child {
+  border-bottom: none;
+}
+
+  /*
     Footnotes section (remark-gfm appends it to the post body). Its
     h2.sr-only only exists in rendered HTML, so Tailwind never sees the
     class — hide it here instead. The section also needs a clearer
@@ -118,9 +248,10 @@
     are out of reach of `.prose > * + *`.
   */
   .prose .footnotes {
-    margin-top: 3em;
-    padding-top: 1.5em;
-    border-top: 1px dashed var(--color-overlay2);
+    margin-top: 5em;
+    padding: 1.5em;
+    border-radius: var(--radius-lg);
+    background-color: var(--color-mantle);
   }
   .prose .footnotes > h2 {
     position: absolute;
@@ -149,7 +280,7 @@
     line-height: 1;
     padding: 0.3rem 0.65rem;
     border-radius: var(--radius-pill);
-    color: var(--color-accent-contrast);
-    background: var(--color-accent);
+    color: var(--color-text);
+    background: var(--color-surface1);
   }
 }

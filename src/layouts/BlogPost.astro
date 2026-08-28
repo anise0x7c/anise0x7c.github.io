@@ -56,6 +56,8 @@ const tocItems = headings.filter((h) => h.depth >= 2 && h.depth <= 3);
       </div>
       { tocItems.length > 0 && (
         <aside class="toc" aria-label="Table of contents" data-pagefind-ignore>
+          <div class="toc-indicator" aria-hidden="true"></div>
+          <div class="toc-title">ON THIS PAGE</div>
           <nav>
             <ul>
               {tocItems.map((item) => (
@@ -79,50 +81,87 @@ const tocItems = headings.filter((h) => h.depth >= 2 && h.depth <= 3);
 
 
 <script>
-  // TOC scroll-spy. Rendered only when the post has headings; this module
-  // script runs after DOM parse on full loads. On swup navigations the head
-  // is synced with the incoming page's <script> tags — a module script added
-  // mid-session executes once and registers the astro:page-load listener
-  // (@swup/astro re-dispatches it on page:view), re-attaching the observer
-  // to each freshly swapped document. The disconnect guard makes repeated
+  // TOC scroll-spy (Fuwari-style, section-based). Posts are sectionized
+  // (src/plugins/sectionize), so each TOC entry's heading.parentElement is
+  // its section. A section is active while any part of it intersects the
+  // viewport; the highlight — a single floating bar — spans the trailing run
+  // of consecutive active sections (reading an h3 usually also keeps its
+  // parent h2's section in view, so the bar covers the h2…h3 links).
+  //
+  // A plain-viewport IntersectionObserver is the change trigger: sections
+  // entering or leaving it are exactly when the run can change, so no scroll
+  // listener is needed. On swup navigations the astro:page-load listener
+  // re-attaches to each swapped document; the cleanup guard keeps repeat
   // invocations idempotent.
-  let observer: IntersectionObserver | null = null;
+  let cleanup: (() => void) | null = null;
   const setupToc = () => {
-    if (observer) {
-      observer.disconnect();
-      observer = null;
-    }
+    cleanup?.();
+    cleanup = null;
     const toc = document.querySelector<HTMLElement>(".toc");
     if (!toc) return;
+    const indicator = toc.querySelector<HTMLElement>(".toc-indicator");
     const links = Array.from(toc.querySelectorAll<HTMLAnchorElement>("a"));
-    const linkMap = new Map<Element, HTMLAnchorElement>();
-    for (const link of links) {
-      const id = decodeURIComponent((link.getAttribute("href") ?? "").slice(1));
-      const target = document.getElementById(id);
-      if (target) linkMap.set(target, link);
-    }
-    const targets = Array.from(linkMap.keys());
+    const sections: HTMLElement[] = [];
+    links.forEach((link) => {
+      const raw = (link.getAttribute("href") ?? "").slice(1);
+      let id = raw;
+      try {
+        id = decodeURIComponent(raw);
+      } catch {
+        /* malformed escape sequence — fall back to the raw slug */
+      }
+      const section = document.getElementById(id)?.parentElement;
+      if (section instanceof HTMLElement) sections.push(section);
+    });
+    if (sections.length === 0) return;
 
-    let activeLink: HTMLAnchorElement | null = links[0] ?? null;
-    if (activeLink) activeLink.classList.add("active");
+    const update = () => {
+      const vh = window.innerHeight;
+      const active = sections.map((s) => {
+        const rect = s.getBoundingClientRect();
+        return rect.top < vh && rect.bottom > 0;
+      });
 
-    const obs = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            const link = linkMap.get(entry.target);
-            if (link && link !== activeLink) {
-              activeLink?.classList.remove("active");
-              link.classList.add("active");
-              activeLink = link;
-            }
-          }
+      // Trailing run of consecutive active sections: skip inactive ones at
+      // the end, then gather the contiguous active stretch before them.
+      let max = sections.length - 1;
+      while (max >= 0 && !active[max]) max--;
+      let min = max;
+      while (min - 1 >= 0 && active[min - 1]) min--;
+
+      for (let i = 0; i < links.length; i++) {
+        if (i === max) {
+          links[i].setAttribute("aria-current", "true");
+        } else {
+          links[i].removeAttribute("aria-current");
         }
-      },
-      { rootMargin: "-90px 0px -70% 0px", threshold: 0 },
-    );
-    observer = obs;
-    for (const target of targets) obs.observe(target);
+      }
+
+      // Glide the indicator over the active run; hide it when none is in
+      // view (the reader is still in the intro).
+      if (!indicator) return;
+      if (max < 0) {
+        indicator.style.opacity = "0";
+        return;
+      }
+
+      const tocRect = toc.getBoundingClientRect();
+      const firstRect = links[min].getBoundingClientRect();
+      const lastRect = links[max].getBoundingClientRect();
+      indicator.style.top = `${firstRect.top - tocRect.top + toc.scrollTop}px`;
+      indicator.style.height = `${lastRect.bottom - firstRect.top}px`;
+      indicator.style.opacity = "1";
+    };
+
+    const observer = new IntersectionObserver(update, {
+      threshold: 0,
+    });
+    for (const section of sections) observer.observe(section);
+    // Fonts settling can shift geometry after setup — re-check once.
+    document.fonts?.ready.then(() => update()).catch(() => {});
+
+    cleanup = () => observer.disconnect();
+    update();
   };
   if (document.querySelector(".toc")) setupToc();
   document.addEventListener("astro:page-load", setupToc);
@@ -136,7 +175,7 @@ const tocItems = headings.filter((h) => h.depth >= 2 && h.depth <= 3);
     background-color: var(--color-base);
     box-shadow: var(--shadow-card);
     border-radius: var(--radius-3xl);
-    padding: 2.5rem 3rem;
+    padding: 2.5rem;
   }
 
   .post-cover {
@@ -173,11 +212,10 @@ const tocItems = headings.filter((h) => h.depth >= 2 && h.depth <= 3);
   .lead {
     font-size: 1.15rem;
     color: var(--color-subtext1);
-    margin: 1rem 0 0;
     line-height: 1.6;
-    padding: 1rem 0;
-    margin-bottom: 1rem ;
-    border-bottom: dashed 2px var(--color-overlay0);
+    margin: 1rem 0 1.5rem;
+    padding: 1rem 0 1rem;
+    border-bottom: solid 2px var(--color-overlay0);
   }
 
   .tags {
@@ -191,7 +229,7 @@ const tocItems = headings.filter((h) => h.depth >= 2 && h.depth <= 3);
 
   .post-text {
     display: flex;
-    gap: 2rem;
+    gap: 1.5rem;
   }
 
   .prose {
@@ -209,6 +247,14 @@ const tocItems = headings.filter((h) => h.depth >= 2 && h.depth <= 3);
     display: none;
   }
 
+  .toc-title {
+    font-weight: 800;
+    color: var(--color-accent);
+    border-left: solid 3px var(--color-accent);
+    padding: 0 0.5rem 0;
+    margin: 0 0.3rem 1.3rem;
+  }
+
   @media (min-width: 64rem) /* = --breakpoint-lg (1024px) */ {
     .toc {
       display: block;
@@ -217,7 +263,27 @@ const tocItems = headings.filter((h) => h.depth >= 2 && h.depth <= 3);
       top: 10dvh;
       max-height: calc(100dvh - 10dvh - 1.5rem);
       overflow-y: auto;
+      /* Adaptive-but-capped column: width = min(max-content, 16rem), so a
+         very long heading wraps here instead of squeezing .prose. */
+      max-width: 16rem;
+      /* Contain the indicator's negative z-index so it sits behind the links
+         but stays above the .post card background. */
+      isolation: isolate;
     }
+  }
+
+  .toc-indicator {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    opacity: 0;
+    background: var(--color-accent-soft);
+    border-radius: var(--radius-md);
+    pointer-events: none;
+    transition:
+      top 0.2s var(--ease-bounce-soft),
+      height 0.2s var(--ease-bounce-soft),
+      opacity 0.2s var(--ease-bounce-soft);
   }
 
   .toc ul {
@@ -225,11 +291,7 @@ const tocItems = headings.filter((h) => h.depth >= 2 && h.depth <= 3);
     margin: 0;
     padding: 0;
     display: grid;
-    gap: 0.1rem;
-  }
-
-  .toc-item {
-    border-left: 1px dashed var(--color-overlay2);
+    gap: 0.2rem;
   }
 
   .toc-item.indent {
@@ -238,26 +300,20 @@ const tocItems = headings.filter((h) => h.depth >= 2 && h.depth <= 3);
 
   .toc-item a {
     display: block;
-    padding: 0.2rem 0 0.2rem 0.65rem;
-    margin-left: -1px;
-    border-left: 1px solid transparent;
+    padding: 0.5rem;
     font-size: 0.85rem;
     line-height: 1.4;
     color: var(--color-subtext1);
     text-decoration: none;
-    transition:
-      color 0.2s ease,
-      border-color 0.2s ease;
+    border-radius: var(--radius-md);
+    box-shadow: inset 0 0 0 1px transparent;
+    /* Long headings wrap; `anywhere` also breaks unbreakable tokens (URLs) */
+    overflow-wrap: anywhere;
   }
 
   .toc-item a:hover {
     color: var(--color-text);
-  }
-
-  .toc-item a.active {
-    color: var(--color-accent);
-    border-left-color: var(--color-accent);
-    font-weight: 500;
+    box-shadow: inset 0 0 0 1px var(--color-overlay0);
   }
 
   .post-footer {
