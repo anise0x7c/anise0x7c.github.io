@@ -16,13 +16,7 @@
     var(--font-jetbrains-mono), ui-monospace,
     "Fira Code", "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
 
-  /* rounded corners */
-  --radius-sm: 0.5rem;
-  --radius-md: 0.9rem;
-  --radius-lg: 1.25rem;
-  --radius-xl: 1.75rem;
-  --radius-2xl: 2.25rem;
-  --radius-3xl: 3.5rem;
+  /* border radius */
   --radius-pill: 999px;
 
   /* Code block panel — a dark surface fixed across light/dark (L 0.2, near

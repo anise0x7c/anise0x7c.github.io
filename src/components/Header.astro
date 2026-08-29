@@ -16,7 +16,7 @@ function isActive(href: string): boolean {
   <div class="header-inner">
     <a href="/" class="site-logo">{SITE.title}</a>
 
-    <nav class="header-nav">
+    <nav class="header-nav" id="header-nav">
       {
         NAV_LINKS.map((link) => (
           <a
@@ -86,6 +86,47 @@ function isActive(href: string): boolean {
         <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
       </svg>
     </ThemedButton>
+      <ThemedButton
+        variant="flat"
+        iconOnly
+        title="Toggle navigation"
+        ariaLabel="Toggle navigation"
+        aria-expanded="false"
+        aria-controls="header-nav"
+        data-nav-toggle
+        class="rounded-pill nav-toggle"
+      >
+        <svg
+          slot="icon"
+          class="icon-menu"
+          xmlns="http://www.w3.org/2000/svg"
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          aria-hidden="true"
+        >
+          <path d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+        <svg
+          slot="icon"
+          class="icon-close"
+          xmlns="http://www.w3.org/2000/svg"
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          aria-hidden="true"
+        >
+          <path d="M6 6l12 12M18 6L6 18" />
+        </svg>
+      </ThemedButton>
     </div>
   </div>
 </header>
@@ -115,6 +156,53 @@ function isActive(href: string): boolean {
       });
   };
   setupThemeToggle();
+
+  // Mobile nav disclosure (≤40rem): toggle + panel live in the persistent
+  // header outside swup's swap container, so bind once, like above. The
+  // open state is mirrored on .site-header[data-nav-open] which drives the
+  // CSS (panel visibility + menu/close icon swap).
+  const headerEl = document.querySelector(".site-header");
+  const navToggle = document.querySelector("[data-nav-toggle]");
+
+  const setMobileNav = (open: boolean) => {
+    headerEl?.toggleAttribute("data-nav-open", open);
+    navToggle?.setAttribute("aria-expanded", String(open));
+  };
+
+  navToggle?.addEventListener("click", () => {
+    setMobileNav(!headerEl?.hasAttribute("data-nav-open"));
+  });
+
+  // Choosing a destination closes the panel — the header persists across
+  // swup navigations, so it would otherwise stay open on the next page.
+  document.querySelector(".header-nav")?.addEventListener("click", (event) => {
+    if (event.target instanceof Element && event.target.closest("a")) {
+      setMobileNav(false);
+    }
+  });
+
+  // Taps outside the header and Escape both dismiss it.
+  document.addEventListener("click", (event) => {
+    if (
+      headerEl?.hasAttribute("data-nav-open") &&
+      event.target instanceof Node &&
+      !headerEl.contains(event.target)
+    ) {
+      setMobileNav(false);
+    }
+  });
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") setMobileNav(false);
+  });
+
+  // Reset when the viewport grows past the mobile breakpoint (matches the
+  // max-width: 40rem media query) or after any swup swap.
+  window
+    .matchMedia("(min-width: 40rem)")
+    .addEventListener("change", (e) => {
+      if (e.matches) setMobileNav(false);
+    });
+  document.addEventListener("astro:after-swap", () => setMobileNav(false));
 
   // Sync the active nav link on swup navigations: the header persists
   // outside the swap container (<main>), so the SSR-rendered `active` class
@@ -200,6 +288,10 @@ function isActive(href: string): boolean {
     .site-header {
       transition: none;
     }
+
+    .site-header .header-nav {
+      transition: none;
+    }
   }
 
   .header-inner {
@@ -208,15 +300,14 @@ function isActive(href: string): boolean {
     -webkit-backdrop-filter: blur(5px);
     border-radius: var(--radius-pill);
     box-shadow:
-      var(--shadow-card),
       inset 5px 5px 10px rgba(255, 255, 255, 0.1),
       inset -5px -5px 20px rgba(255, 255, 255, 0.2);
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    min-height: 3.75rem;
+    min-height: 3.25rem;
     margin-inline: 1rem;
-    padding: 0.9rem 1.25rem;
+    padding: 0.7rem 1.25rem;
 
     transition:
       transform 0.4s var(--ease-bounce),
@@ -225,10 +316,17 @@ function isActive(href: string): boolean {
 
   .header-inner:hover {
     box-shadow:
-      var(--shadow-card),
       inset 5px 5px 20px rgba(255, 255, 255, 0.1),
       inset -5px -5px 30px rgba(255, 255, 255, 0.2);
     transform: scale(1.02);
+  }
+
+  @media (hover: none) {
+    .header-inner:hover {
+      /* 触屏没有真正的 hover:点击(包括点开移动端菜单)会让 :hover
+         粘滞,药丸会一直保持放大 + 高亮阴影 */
+      transform: none;
+    }
   }
 
   .site-logo {
@@ -270,11 +368,89 @@ function isActive(href: string): boolean {
     text-decoration: underline;
   }
 
+  /* --- 汉堡按钮(仅移动端)与菜单/关闭图标切换 --- */
+
+  .nav-toggle,
+  .icon-close {
+    display: none;
+  }
+
+  .site-header[data-nav-open] .icon-menu {
+    display: none;
+  }
+
+  .site-header[data-nav-open] .icon-close {
+    display: block;
+  }
+
+  /* --- 移动端 (≤40rem):单行布局 + 导航下拉面板 --- */
+
   @media (max-width: 40rem) {
     .header-inner {
-      flex-wrap: wrap;
-      justify-content: center;
-      row-gap: 0.25rem;
+      position: relative;
+      /* .site-header 是 flex 容器,子项默认按内容收缩,
+         需显式拉伸才能占满一行(margin-inline: 0 只去掉空隙) */
+      flex: 1;
+      flex-wrap: nowrap;
+      min-height: 3rem;
+      /* 满宽贴边:去掉两侧留白 */
+      padding: 0.5rem 0.75rem;
+    }
+
+    .site-logo {
+      margin: 0 auto 0 0.25rem;
+      font-size: 0.8rem;
+    }
+
+    .header-tools {
+      margin-left: 0;
+      gap: 0;
+    }
+
+    .nav-toggle {
+      display: inline-flex;
+    }
+
+    /* 导航复用为下拉面板:右对齐锚定在药丸下方,宽度随内容收缩 */
+    .header-nav {
+      position: absolute;
+      top: calc(100% + 0.5rem);
+      right: 0;
+      min-width: 8rem;
+      display: none;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0.25rem;
+      padding: 0.375rem;
+      background-color: color-mix(in srgb, var(--color-base) 50%, transparent);
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-card);
+      opacity: 0;
+      translate: 0 -0.25rem;
+      transition:
+        opacity 0.2s var(--ease-bounce-soft),
+        translate 0.2s var(--ease-bounce-soft),
+        display 0.2s allow-discrete;
+    }
+
+    .site-header[data-nav-open] .header-nav {
+      display: flex;
+      opacity: 1;
+      translate: 0 0;
+    }
+
+    @starting-style {
+      .site-header[data-nav-open] .header-nav {
+        opacity: 0;
+        translate: 0 -0.25rem;
+      }
+    }
+
+    .nav-link {
+      padding: 0.6rem 1rem;
+      text-align: center;
     }
   }
 
