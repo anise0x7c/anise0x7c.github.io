@@ -29,7 +29,7 @@ function isActive(href: string): boolean {
       }
     </nav>
 
-    <div class="header-tools">
+    <div class="header-tools">  
       <ThemedButton
         variant="flat"
         iconOnly
@@ -290,14 +290,21 @@ function isActive(href: string): boolean {
 <style>
   .site-header {
     position: sticky;
-    display: flex;
-    justify-content: center;
     top: 0;
     z-index: 50;
-    max-width: calc(var(--container-page));
+    translate: 0 5px;
+    max-width: var(--container-page);
     margin: auto;
-    translate: 0 3px;
+    /* Same inline gutters as .page-container, so the pill's sides track the
+       page content edges (incl. the tighter mobile override below). */
+    padding-inline: clamp(1rem, 4vw, 1.5rem);
     transition: translate 0.3s var(--ease-bounce-soft);
+  }
+
+  @media (max-width: 40rem) {
+    .site-header {
+      padding-inline: 0.5rem;
+    }
   }
 
   .site-header[data-hidden] {
@@ -316,34 +323,19 @@ function isActive(href: string): boolean {
   }
 
   .header-inner {
-    background-color: color-mix(in srgb, var(--color-base) 50%, transparent);
-    /* No backdrop-filter here — see .header-inner::before. An ancestor
-       with backdrop-filter would become a "backdrop root" and blind the
-       mobile dropdown's own backdrop-filter (it could only sample content
-       inside this pill, i.e. nothing). position + z-index give the pill a
-       stacking context so ::before's z-index:-1 stays above the page. */
+    background-color: color-mix(in srgb, var(--color-base) 70%, transparent);
     position: relative;
     z-index: 0;
-    border-radius: var(--radius-pill);
-    box-shadow:
-      inset 5px 5px 10px rgba(255, 255, 255, 0.1),
-      inset -5px -5px 20px rgba(255, 255, 255, 0.2);
     display: flex;
+    border-radius: var(--radius-pill);
+    box-shadow: var(--shadow-sticky);
+    flex: 1;
     align-items: center;
     gap: 0.5rem;
-    min-height: 3.25rem;
-    margin-inline: 1rem;
     padding: 0.7rem 1.25rem;
-
-    transition:
-      box-shadow 0.4s var(--ease-spring);
   }
 
-  /* Frosted-glass layer. Lives on a pseudo-element (not .header-inner
-     itself) so the pill keeps its blur while the mobile dropdown — a
-     descendant of .header-inner — can still blur the page behind it: a
-     pseudo-element is a sibling box, never an ancestor, so it does not
-     form a backdrop root around the dropdown. */
+
   .header-inner::before {
     content: "";
     position: absolute;
@@ -375,7 +367,9 @@ function isActive(href: string): boolean {
     line-height: 1; /* 行高 = 字号，防止撑高 header */
     color: var(--color-text);
     text-decoration: none; /* 去掉链接下划线 */
-    margin: 0 3rem 0 0.5rem;
+    /* Tripartite desktop layout: right auto (paired with .header-tools's
+       margin-left:auto) centers the nav between logo and tools. */
+    margin: 0 auto 0 0;
   }
 
   .header-nav {
@@ -388,8 +382,8 @@ function isActive(href: string): boolean {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    /* Clearer separation from the nav links than the generic row gap */
-    margin-left: 3rem;
+    /* Tripartite desktop layout: pins the tools to the pill's right edge */
+    margin-left: auto;
   }
 
   .nav-link {

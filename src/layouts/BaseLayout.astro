@@ -42,12 +42,10 @@ const isHome = Astro.url.pathname === "/";
     <meta name="twitter:card" content="summary_large_image" />
 
     <!-- Self-hosted web fonts (see `fonts` in astro.config.mjs): Nunito
-         (rounded sans body), Caveat + Ma Shan Zheng (handwritten accents).
-         Preload only the above-the-fold Latin faces; the CJK font ships as
-         unicode-range slices fetched by the browser on demand. -->
+         (rounded sans body) and JetBrains Mono (code). Preload only the
+         above-the-fold Latin faces; CJK/emoji fall through to system fonts
+         via --font-nunito's metric-optimized fallbacks. -->
     <Font cssVariable="--font-nunito" preload={[{ weight: "400" }]} />
-    <Font cssVariable="--font-caveat" preload={[{ weight: "600" }]} />
-    <Font cssVariable="--font-mashanzheng" />
     <Font cssVariable="--font-jetbrains-mono" />
 
     <!-- Theme + hue knob are applied before first paint to avoid a flash of

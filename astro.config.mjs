@@ -60,23 +60,6 @@ export default defineConfig({
     },
     {
       provider: fontProviders.google(),
-      name: 'Caveat',
-      cssVariable: '--font-caveat',
-      weights: [600, 700],
-      styles: ['normal'],
-      // Caveat has no CJK glyphs; a generic fallback here (e.g. sans-serif)
-      // would swallow Chinese chars before they reach --font-mashanzheng.
-      fallbacks: [],
-    },
-    {
-      provider: fontProviders.google(),
-      name: 'Ma Shan Zheng',
-      cssVariable: '--font-mashanzheng',
-      weights: [400],
-      styles: ['normal'],
-    },
-    {
-      provider: fontProviders.google(),
       name: 'JetBrains Mono',
       cssVariable: '--font-jetbrains-mono',
       weights: [400, 700],

@@ -7,11 +7,11 @@
     CJK/emoji chars fall through to system fonts naturally.
 
     正文：拉丁 → Nunito；中文/emoji → 沿 --font-nunito 自带的度量优化回退落到系统字体
-    手写体标题：英文 → Caveat；中文 → 穿透到马善政
+    展示字体（--font-display）：同正文的 Nunito
     代码：JetBrains Mono（所有访客一致），中文注释回退系统等宽
   */
   --font-sans: var(--font-nunito);
-  --font-display: var(--font-caveat), var(--font-mashanzheng), cursive;
+  --font-display: var(--font-nunito);
   --font-mono: 
     var(--font-jetbrains-mono), ui-monospace,
     "Fira Code", "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
@@ -26,7 +26,7 @@
   --radius-lg: 1.25rem;
   --radius-xl: 1.75rem;
   --radius-2xl: 2.25rem;
-  --radius-3xl: 3.5rem;
+  --radius-3xl: 2.75rem;
   --radius-pill: 999px;
 
   /* Code block panel — a dark surface fixed across light/dark (L 0.2, near
