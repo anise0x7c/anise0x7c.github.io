@@ -130,5 +130,15 @@ const classes = [
       height: 2.25rem;
       padding: 0;
     }
+
+    /* Root font-size drops to 87.5% on mobile, which would shrink these
+       2.25rem icon buttons to ~31.5px — too small for the three header
+       tap targets. Bump them back up so touch stays ≥35px. */
+    @media (max-width: 40rem) {
+      .btn--icon {
+        width: 2.5rem;
+        height: 2.5rem;
+      }
+    }
   }
 </style>

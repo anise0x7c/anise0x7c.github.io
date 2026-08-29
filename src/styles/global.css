@@ -20,6 +20,11 @@
 
   @media (max-width: 40rem) {
     html {
+      /* Mobile type/space scale: drop the root font-size one notch so every
+         rem-based font-size, gap, margin, padding and radius shrinks ~12.5%
+         in lock-step (16px → 14px). % rather than px, so it stays relative
+         to the visitor's own default font size. */
+      font-size: 87.5%;
       scroll-padding-top: 4rem;
     }
   }

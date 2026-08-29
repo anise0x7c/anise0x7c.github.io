@@ -438,7 +438,9 @@ function isActive(href: string): boolean {
 
     .site-logo {
       margin: 0 auto 0 0.25rem;
-      font-size: 0.8rem;
+      /* 0.85rem (not 0.8) — the 87.5% root font-size on mobile would take
+         0.8rem down to ~11px; nudge it back up for brand legibility. */
+      font-size: 0.85rem;
     }
 
     .header-tools {
