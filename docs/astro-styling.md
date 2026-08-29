@@ -60,6 +60,16 @@ Tailwind v4 的 cascade layers 顺序为 `theme < base < components < utilities`
 - `global.css` 的 `@layer base` 里有 `*` 全元素颜色 transition（为了 light/dark 切换全站同步）。它意味着全站样式重算，且任何 `transition-*` 工具类会整体覆盖该规则。
 - 手写 `@media (min-width: 1024px)` / `(max-width: 640px)` 对应 v4 默认断点 `lg:` / `sm:`；若未来迁移到工具类断点，注意保持数值一致。
 
+### 三·六、响应式约定（本仓库特有，必读）
+
+1. **断点单一事实源**：`themes.css` 的 `--breakpoint-sm/md/lg/xl`(40/48/64/80rem) 是权威定义；组件内手写 `@media` 时用对应的 **rem 字面量**（CSS 变量不能用于媒体查询条件），并加注释对齐，如 `@media (max-width: 40rem) /* = --breakpoint-sm */`。
+2. **网格防溢出模式**：任何 `repeat(auto-fill, minmax(Xrem, 1fr))` 的 X 大于手机屏宽时会横向溢出。一律写成 `minmax(min(Xrem, 100%), 1fr)` —— 窄屏退化为单列满宽，桌面端行为不变。（2026-08 修复了首页 card-list、/blogs card-grid 的 30rem 溢出。）
+3. **平滑降级优先**：间距/字号用 `clamp()` 连续缩放（如 `.post` 的 `clamp(1.25rem, 6vw, 2.5rem)`），`@media` 只用来做离散切换（隐藏 TOC、汉堡菜单、换圆角档位）。
+4. **锚点避让**：`global.css` 在 `html` 上设 `scroll-padding-top`（桌面 4.75rem / ≤40rem 4rem），TOC 与锚点跳转落在 sticky 药丸头部之下；不要在单个元素上各自加 `scroll-margin`。
+5. **圆角令牌不可删**：`--radius-sm~3xl` 被约 27 处 scoped 样式消费，且同时映射 Tailwind 的 `rounded-*` 工具类。删除它们不会报错，只会静默回落为 Tailwind 默认小圆角、全站视觉漂移（2026-08 曾误删，已恢复并加注释）。
+6. **验收基线**：任何页面改动后，在 320/360/375/768/1024/1440px 下检查 `document.documentElement.scrollWidth <= innerWidth`（无横向滚动）；移动端交互（汉堡菜单、搜索弹层）必须过键盘操作（Tab/Esc/焦点归还）。
+
+
 ## 四、生产打包
 
 - CSS 按页分块 + 共享块；`< 4kB` 默认内联进 `<style>`。

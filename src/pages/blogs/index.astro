@@ -46,7 +46,9 @@ const posts = await getPublishedPosts();
     margin: 0;
     padding: 0;
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(30rem, 1fr));
+    /* min(30rem, 100%) keeps the track from exceeding the viewport below
+       30rem — a bare minmax(30rem, 1fr) overflows horizontally on phones. */
+    grid-template-columns: repeat(auto-fill, minmax(min(30rem, 100%), 1fr));
     gap: 1.5rem;
     align-items: stretch;
   }

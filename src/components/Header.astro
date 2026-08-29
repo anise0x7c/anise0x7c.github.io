@@ -162,11 +162,27 @@ function isActive(href: string): boolean {
   // open state is mirrored on .site-header[data-nav-open] which drives the
   // CSS (panel visibility + menu/close icon swap).
   const headerEl = document.querySelector(".site-header");
-  const navToggle = document.querySelector("[data-nav-toggle]");
+  const navToggle =
+    document.querySelector<HTMLButtonElement>("[data-nav-toggle]");
+  const navPanel = document.querySelector(".header-nav");
 
-  const setMobileNav = (open: boolean) => {
+  const setMobileNav = (open: boolean, moveFocus = true) => {
+    const wasOpen = headerEl?.hasAttribute("data-nav-open") ?? false;
     headerEl?.toggleAttribute("data-nav-open", open);
     navToggle?.setAttribute("aria-expanded", String(open));
+    if (!moveFocus) return;
+    if (open && !wasOpen) {
+      // Opening: hand focus to the first link so Tab flows through the
+      // panel in DOM order (the panel sits before .header-tools).
+      navPanel?.querySelector<HTMLAnchorElement>("a")?.focus();
+    } else if (!open && wasOpen) {
+      // Closing: return focus to the toggle, but only when focus was
+      // parked inside the panel (Escape / outside click / link click) —
+      // resize and scroll dismissals must not steal focus.
+      if (navPanel?.contains(document.activeElement)) {
+        navToggle?.focus();
+      }
+    }
   };
 
   navToggle?.addEventListener("click", () => {
@@ -196,13 +212,14 @@ function isActive(href: string): boolean {
   });
 
   // Reset when the viewport grows past the mobile breakpoint (matches the
-  // max-width: 40rem media query) or after any swup swap.
+  // max-width: 40rem media query) or after any swup swap. Both are
+  // programmatic dismissals — never steal focus back to the toggle.
   window
     .matchMedia("(min-width: 40rem)")
     .addEventListener("change", (e) => {
-      if (e.matches) setMobileNav(false);
+      if (e.matches) setMobileNav(false, false);
     });
-  document.addEventListener("astro:after-swap", () => setMobileNav(false));
+  document.addEventListener("astro:after-swap", () => setMobileNav(false, false));
 
   // Sync the active nav link on swup navigations: the header persists
   // outside the swap container (<main>), so the SSR-rendered `active` class
@@ -240,6 +257,10 @@ function isActive(href: string): boolean {
       header.removeAttribute("data-hidden");
     } else if (y > headerLastY + HEADER_DEADZONE) {
       header.setAttribute("data-hidden", "");
+      // The dropdown panel is anchored to the header — dismiss it along
+      // with the header so it can't float over the page ownerless. Not a
+      // user-initiated close, so don't move focus.
+      setMobileNav(false, false);
     }
     headerLastY = y;
   };
@@ -427,6 +448,10 @@ function isActive(href: string): boolean {
       -webkit-backdrop-filter: blur(5px);
       border-radius: var(--radius-xl);
       box-shadow: var(--shadow-card);
+      /* Cap the panel to the viewport (future-proof for more links); the
+         header itself is max 3.25rem + margins, hence the 6rem budget. */
+      max-height: calc(100dvh - 6rem);
+      overflow-y: auto;
       opacity: 0;
       translate: 0 -0.25rem;
       transition:

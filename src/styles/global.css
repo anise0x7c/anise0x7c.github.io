@@ -13,6 +13,15 @@
   html {
     scroll-behavior: smooth;
     -webkit-text-size-adjust: 100%;
+    /* Anchor/TOC jumps land below the sticky pill header (≈3.5rem tall);
+       slightly tighter on mobile where the pill is slimmer. */
+    scroll-padding-top: 4.75rem;
+  }
+
+  @media (max-width: 40rem) {
+    html {
+      scroll-padding-top: 4rem;
+    }
   }
 
   body {
@@ -25,6 +34,10 @@
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    /* Last-resort guard against horizontal overflow (long tokens, edge-case
+       tables). `clip` — not `hidden` — so it never becomes a scroll
+       container and breaks position: sticky descendants. */
+    overflow-x: clip;
   }
 
   /*

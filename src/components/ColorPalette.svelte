@@ -281,6 +281,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    flex-wrap: wrap;
     gap: 1rem;
     padding: 0.7rem 0.7rem;
   }
@@ -355,7 +356,9 @@
     align-items: center;
     gap: 0.9rem;
     flex: 1;
-    min-width: 16rem;
+    /* min(Xrem, 100%) so the row can shrink below 16rem on very narrow
+       screens instead of forcing horizontal overflow. */
+    min-width: min(16rem, 100%);
   }
 
   .hue-label {

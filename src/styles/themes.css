@@ -16,7 +16,17 @@
     var(--font-jetbrains-mono), ui-monospace,
     "Fira Code", "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
 
-  /* border radius */
+  /* rounded corners — consumed via var(--radius-*) by ~27 call sites across
+     scoped component styles AND mapped to Tailwind's rounded-sm~3xl
+     utilities. Do not remove: with only the default theme left, all radii
+     silently collapse to Tailwind's tiny defaults and the whole site
+     re-skins. */
+  --radius-sm: 0.5rem;
+  --radius-md: 0.9rem;
+  --radius-lg: 1.25rem;
+  --radius-xl: 1.75rem;
+  --radius-2xl: 2.25rem;
+  --radius-3xl: 3.5rem;
   --radius-pill: 999px;
 
   /* Code block panel — a dark surface fixed across light/dark (L 0.2, near

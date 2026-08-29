@@ -57,11 +57,18 @@ const recent = await getRecentPosts(6);
 <style>
   .hero {
     background-color: var(--color-base);
-    padding: 3rem;
+    padding: clamp(1.5rem, 6vw, 3rem);
     margin-bottom: 4rem;
     border-radius: var(--radius-3xl);
     box-shadow: var(--shadow-card);
     transition: box-shadow 0.4s var(--ease-spring);
+  }
+
+  @media (max-width: 40rem) {
+    .hero {
+      border-radius: var(--radius-2xl);
+      margin-bottom: 2.5rem;
+    }
   }
 
   .hero:hover {
@@ -102,7 +109,7 @@ const recent = await getRecentPosts(6);
   }
 
   .recent {
-    padding-bottom: 90rem;
+    padding-bottom: 0;
   }
 
   .section-head {
@@ -119,6 +126,17 @@ const recent = await getRecentPosts(6);
     margin: 0;
   }
 
+  /* Must come after the base rules above: same specificity, later wins. */
+  @media (max-width: 40rem) {
+    .section-head {
+      padding: 0.75rem 1.25rem;
+    }
+
+    .section-head h2 {
+      font-size: 1.15rem;
+    }
+  }
+
   .section-head a {
     font-size: 0.9rem;
     color: var(--color-accent);
@@ -130,7 +148,9 @@ const recent = await getRecentPosts(6);
     margin: 0;
     padding: 0;
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(30rem, 1fr));
+    /* min(Xrem, 100%) keeps the track from exceeding the viewport below
+       Xrem — a bare minmax(30rem, 1fr) overflows horizontally on phones. */
+    grid-template-columns: repeat(auto-fill, minmax(min(30rem, 100%), 1fr));
     gap: 2rem;
     align-items: stretch;
   }
@@ -141,7 +161,7 @@ const recent = await getRecentPosts(6);
     margin: 0;
     padding: 0;
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(25rem, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(min(25rem, 100%), 1fr));
     gap: 2rem;
     align-items: stretch;
   }

@@ -269,6 +269,14 @@
     -webkit-backdrop-filter: blur(7px);
   }
 
+  @media (max-width: 40rem) {
+    .overlay {
+      /* Tighter side gutters on phones; dvh so the panel top stays put as
+         the mobile URL bar collapses. */
+      padding: 8dvh 0.75rem 0.75rem;
+    }
+  }
+
   .panel {
     display: flex;
     flex-direction: column;
@@ -280,6 +288,14 @@
     box-shadow: var(--shadow-float);
     overflow: hidden;
     animation: overlay-in 0.4s var(--ease-spring) both;
+  }
+
+  @media (max-width: 40rem) {
+    .panel {
+      /* dvh + slightly taller allowance: the small screen is the case
+         where the URL bar appearing/disappearing actually moves things. */
+      max-height: 70dvh;
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -332,6 +348,7 @@
 
   .results {
     overflow-y: auto;
+    overscroll-behavior: contain;
     padding: 0.5rem;
   }
 
