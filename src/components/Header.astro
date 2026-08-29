@@ -333,6 +333,7 @@ function isActive(href: string): boolean {
     align-items: center;
     gap: 0.5rem;
     padding: 0.7rem 1.25rem;
+    transition: box-shadow 0.4s var(--ease-spring);
   }
 
 
@@ -346,17 +347,11 @@ function isActive(href: string): boolean {
     -webkit-backdrop-filter: blur(5px);
   }
 
-  .header-inner:hover {
-    box-shadow:
-      inset 5px 5px 20px rgba(255, 255, 255, 0.1),
-      inset -5px -5px 30px rgba(255, 255, 255, 0.2);
-  }
-
-  @media (hover: none) {
+  @media (hover: hover) {
     .header-inner:hover {
-      /* 触屏没有真正的 hover:点击(包括点开移动端菜单)会让 :hover
-         粘滞,药丸会一直保持放大 + 高亮阴影 */
-      transform: none;
+      box-shadow:
+        inset 5px 5px 20px rgba(255, 255, 255, 0.1),
+        inset -5px -5px 30px rgba(255, 255, 255, 0.2);
     }
   }
 
@@ -393,8 +388,10 @@ function isActive(href: string): boolean {
     color: var(--color-text);
   }
 
-  .nav-link:hover {
-    background-color: color-mix(in srgb, var(--color-overlay2) 30%, transparent);
+  @media (hover: hover) {
+    .nav-link:hover {
+      background-color: color-mix(in srgb, var(--color-overlay2) 70%, transparent);
+    }
   }
 
   .nav-link.active{
@@ -463,9 +460,9 @@ function isActive(href: string): boolean {
       align-items: stretch;
       gap: 0.25rem;
       padding: 0.375rem;
-      background-color: color-mix(in srgb, var(--color-base) 50%, transparent);
-      backdrop-filter: blur(5px);
-      -webkit-backdrop-filter: blur(5px);
+      background-color: color-mix(in srgb, var(--color-base) 70%, transparent);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
       border-radius: var(--radius-xl);
       box-shadow: var(--shadow-card);
       /* Cap the panel to the viewport (future-proof for more links); the

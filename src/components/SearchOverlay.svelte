@@ -341,9 +341,11 @@
     cursor: pointer;
   }
 
-  .esc:hover {
-    color: var(--color-text);
-    border-color: var(--color-overlay2);
+  @media (hover: hover) {
+    .esc:hover {
+      color: var(--color-text);
+      border-color: var(--color-overlay2);
+    }
   }
 
   .results {
@@ -376,9 +378,14 @@
     text-decoration: none;
   }
 
-  .result:hover,
   .result.active {
     background: var(--color-surface1);
+  }
+
+  @media (hover: hover) {
+    .result:hover {
+      background: var(--color-surface1);
+    }
   }
 
   .result .title {

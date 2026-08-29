@@ -331,9 +331,11 @@ const tocItems = headings.filter((h) => h.depth >= 2 && h.depth <= 3);
     overflow-wrap: anywhere;
   }
 
-  .toc-item a:hover {
-    color: var(--color-text);
-    box-shadow: inset 0 0 0 1px var(--color-overlay0);
+  @media (hover: hover) {
+    .toc-item a:hover {
+      color: var(--color-text);
+      box-shadow: inset 0 0 0 1px var(--color-overlay0);
+    }
   }
 
   .post-footer {
@@ -348,7 +350,9 @@ const tocItems = headings.filter((h) => h.depth >= 2 && h.depth <= 3);
     text-decoration: none;
   }
 
-  .post-footer a:hover {
-    color: var(--color-accent);
+  @media (hover: hover) {
+    .post-footer a:hover {
+      color: var(--color-accent);
+    }
   }
 </style>

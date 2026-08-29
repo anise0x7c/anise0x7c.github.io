@@ -70,12 +70,14 @@ const { title, description, pubDate, tags, cover, draft } = post.data;
     transition: opacity 0.4s var(--ease-spring);
   }
 
-  .card:hover {
-    box-shadow: var(--shadow-float);
-  }
+  @media (hover: hover) {
+    .card:hover {
+      box-shadow: var(--shadow-float);
+    }
 
-  .card:hover::after {
-    opacity: 1;
+    .card:hover::after {
+      opacity: 1;
+    }
   }
 
   .cover {

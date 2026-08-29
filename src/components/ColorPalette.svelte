@@ -309,8 +309,10 @@
     transition: background-color 0.4s var(--ease-spring);
   }
 
-  .tool-toggle:hover {
-    background: var(--color-surface1);
+  @media (hover: hover) {
+    .tool-toggle:hover {
+      background: var(--color-surface1);
+    }
   }
 
   .chevron {
@@ -430,8 +432,10 @@
     cursor: pointer;
   }
 
-  .reset:hover {
-    background: var(--color-surface1);
+  @media (hover: hover) {
+    .reset:hover {
+      background: var(--color-surface1);
+    }
   }
 
   .groups {
@@ -480,8 +484,10 @@
     text-align: left;
   }
 
-  .swatch-row:hover {
-    background: var(--color-surface0);
+  @media (hover: hover) {
+    .swatch-row:hover {
+      background: var(--color-surface0);
+    }
   }
 
   .swatch-row.copied {
@@ -523,12 +529,13 @@
     margin-left: auto;
     color: var(--color-subtext0);
     opacity: 0;
-    transition:
-      opacity 0.4s var(--ease-spring),
+    transition: opacity 0.4s var(--ease-spring);
   }
 
-  .swatch-row:hover .copy-icon {
-    opacity: 1;
+  @media (hover: hover) {
+    .swatch-row:hover .copy-icon {
+      opacity: 1;
+    }
   }
 
   .swatch-row.copied .copy-icon {

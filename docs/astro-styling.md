@@ -68,6 +68,7 @@ Tailwind v4 的 cascade layers 顺序为 `theme < base < components < utilities`
 4. **锚点避让**：`global.css` 在 `html` 上设 `scroll-padding-top`（桌面 4.75rem / ≤40rem 4rem），TOC 与锚点跳转落在 sticky 药丸头部之下；不要在单个元素上各自加 `scroll-margin`。
 5. **圆角令牌不可删**：`--radius-sm~3xl` 被约 27 处 scoped 样式消费，且同时映射 Tailwind 的 `rounded-*` 工具类。删除它们不会报错，只会静默回落为 Tailwind 默认小圆角、全站视觉漂移（2026-08 曾误删，已恢复并加注释）。
 6. **验收基线**：任何页面改动后，在 320/360/375/768/1024/1440px 下检查 `document.documentElement.scrollWidth <= innerWidth`（无横向滚动）；移动端交互（汉堡菜单、搜索弹层）必须过键盘操作（Tab/Esc/焦点归还）。
+7. **hover 规则一律 gate**：触屏设备点击会让 `:hover` 粘滞（高亮/阴影在点击后持久保留，直到点别处才消失）。所有纯 hover 效果必须包在 `@media (hover: hover) { ... }` 内（与 Tailwind v4 自身 `hover:` 变体的编译行为一致）；与 `.active` / `[aria-selected]` 等真实状态选择器分组时必须拆开，状态类保留在媒体查询外。（2026-08 修复了全站 14 处粘滞 hover。）
 
 
 ## 四、生产打包
