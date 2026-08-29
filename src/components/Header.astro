@@ -450,13 +450,19 @@ function isActive(href: string): boolean {
       display: inline-flex;
     }
 
-    /* 导航复用为下拉面板:右对齐锚定在药丸下方,宽度随内容收缩 */
+    /* 导航复用为下拉面板:右对齐锚定在药丸下方,宽度随内容收缩。
+       可见性用 visibility 而非 display:none —— 面板始终渲染,进出动画
+       不依赖 transition-behavior: allow-discrete(display 过渡在部分
+       浏览器/Safari 实现有缺陷:退出时 display:none 立即生效,会掐断
+       opacity/translate 的过渡,菜单瞬间消失)。visibility 是离散可过渡
+       属性,任何浏览器都能配合 opacity/translate 做完整的进出动画。
+       translate 基态 -1rem = 进入起点 / 退出终点(弹出距离,进出对称)。 */
     .header-nav {
       position: absolute;
       top: calc(100% + 0.5rem);
       right: 0;
       min-width: 8rem;
-      display: none;
+      display: flex;
       flex-direction: column;
       align-items: stretch;
       gap: 0.25rem;
@@ -470,25 +476,29 @@ function isActive(href: string): boolean {
          header itself is max 3.25rem + margins, hence the 6rem budget. */
       max-height: calc(100dvh - 6rem);
       overflow-y: auto;
+      visibility: hidden;
+      pointer-events: none;
       opacity: 0;
-      translate: 0 -0.25rem;
+      translate: 0 -1rem;
+      /* 退出:opacity/translate 立即过渡,visibility 延迟 0.4s 到动画
+         结束后才隐藏 —— 退出因此有完整的淡出+上滑 */
       transition:
         opacity 0.4s var(--ease-spring),
         translate 0.4s var(--ease-spring),
-        display 0.4s allow-discrete;
+        visibility 0s linear 0.4s;
     }
 
     .site-header[data-nav-open] .header-nav {
-      display: flex;
+      visibility: visible;
+      pointer-events: auto;
       opacity: 1;
       translate: 0 0;
-    }
-
-    @starting-style {
-      .site-header[data-nav-open] .header-nav {
-        opacity: 0;
-        translate: 0 -0.25rem;
-      }
+      /* 进入:visibility 零延迟立即可见(opacity 才有起点可过渡),
+         opacity/translate 走同一个 0.4s ease-spring */
+      transition:
+        opacity 0.4s var(--ease-spring),
+        translate 0.4s var(--ease-spring),
+        visibility 0s;
     }
 
     .nav-link {
