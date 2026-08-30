@@ -1,74 +1,50 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
 <svg
-   width="48"
-   height="48"
-   viewBox="0 0 12.7 12.7"
+   width="64"
+   height="64"
+   viewBox="0 0 16.933 16.933"
    version="1.1"
-   id="svg1"
+   id="svg5"
    xmlns="http://www.w3.org/2000/svg"
    xmlns:svg="http://www.w3.org/2000/svg">
   <defs
-     id="defs1" />
-  <g
-     id="layer1">
-    <rect
-       style="fill:#1c1c24;stroke-width:0.33877;stroke-linecap:round;stroke-linejoin:round"
-       id="rect1"
-       width="9"
-       height="11"
-       x="1.4999999"
-       y="0.99999982"
-       ry="1.5740466"
-       rx="0" />
-    <rect
-       style="fill:#8787de;stroke-width:0.251005;stroke-linecap:round;stroke-linejoin:round"
-       id="rect6"
-       width="4.5"
-       height="0.99999994"
-       x="6.5"
-       y="7"
-       rx="0"
-       ry="0.49999997" />
-    <rect
-       style="fill:#8787de;stroke-width:0.251005;stroke-linecap:round;stroke-linejoin:round"
-       id="rect7"
-       width="4.5"
-       height="0.99999994"
-       x="6.5"
-       y="9"
-       rx="0"
-       ry="0.49999997" />
-    <rect
-       style="fill:#8787de;stroke-width:0.251006;stroke-linecap:round;stroke-linejoin:round"
-       id="rect8"
-       width="4.4999995"
-       height="0.99999982"
-       x="6.5"
-       y="5"
-       rx="0"
-       ry="0.49999991" />
-    <ellipse
-       style="fill:#53536c;stroke-width:0.271153;stroke-linecap:round;stroke-linejoin:round"
-       id="path8"
-       cx="3.25"
-       cy="3"
-       rx="0.75"
-       ry="0.74999994" />
-    <ellipse
-       style="fill:#53536c;stroke-width:0.271153;stroke-linecap:round;stroke-linejoin:round"
-       id="path8-0"
-       cx="3.25"
-       cy="6.5337"
-       rx="0.75"
-       ry="0.74999994" />
-    <ellipse
-       style="fill:#53536c;stroke-width:0.271153;stroke-linecap:round;stroke-linejoin:round"
-       id="path8-0-9"
-       cx="3.25"
-       cy="10"
-       rx="0.75"
-       ry="0.74999994" />
-  </g>
+     id="defs2" />
+  <rect
+     width="13.757"
+     height="13.742"
+     x="1.5880001"
+     y="1.587"
+     fill="#030000"
+     rx="2.9100001"
+     ry="2.9100001"
+     id="rect3"
+     style="display:inline;fill:#53536c" />
+  <rect
+     width="12.171"
+     height="12.171"
+     x="2.381"
+     y="2.381"
+     fill="#262626"
+     rx="2.1170001"
+     ry="2.1170001"
+     id="rect4"
+     style="fill:#373748" />
+  <circle
+     style="fill:#53536c;stroke-width:0.220482;stroke-linecap:round;stroke-linejoin:round"
+     id="path5"
+     cx="5.0269847"
+     cy="4.7624063"
+     r="1.3228905" />
+  <circle
+     style="fill:#53536c;stroke-width:0.220482;stroke-linecap:round;stroke-linejoin:round"
+     id="path5-6"
+     cx="5.0269847"
+     cy="8.4665003"
+     r="1.3228905" />
+  <circle
+     style="fill:#53536c;stroke-width:0.220482;stroke-linecap:round;stroke-linejoin:round"
+     id="path5-6-5"
+     cx="5.0269847"
+     cy="12.170594"
+     r="1.3228905" />
 </svg>
