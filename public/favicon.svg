@@ -10,41 +10,31 @@
   <defs
      id="defs2" />
   <rect
-     width="13.757"
-     height="13.742"
-     x="1.5880001"
-     y="1.587"
-     fill="#030000"
-     rx="2.9100001"
-     ry="2.9100001"
-     id="rect3"
-     style="display:inline;fill:#53536c" />
-  <rect
-     width="12.171"
-     height="12.171"
-     x="2.381"
-     y="2.381"
+     width="11.09781"
+     height="14.010808"
+     x="2.9248309"
+     y="1.6907424"
      fill="#262626"
-     rx="2.1170001"
-     ry="2.1170001"
+     rx="2.1166241"
+     ry="2.2779295"
      id="rect4"
-     style="fill:#373748" />
+     style="fill:#1c1c24;stroke-width:1.02452" />
   <circle
-     style="fill:#53536c;stroke-width:0.220482;stroke-linecap:round;stroke-linejoin:round"
+     style="fill:#6f6f91;stroke-width:0.188695;stroke-linecap:round;stroke-linejoin:round"
      id="path5"
-     cx="5.0269847"
-     cy="4.7624063"
-     r="1.3228905" />
+     cx="5.2177081"
+     cy="4.4928565"
+     r="1.1321671" />
   <circle
-     style="fill:#53536c;stroke-width:0.220482;stroke-linecap:round;stroke-linejoin:round"
+     style="fill:#6f6f91;stroke-width:0.188695;stroke-linecap:round;stroke-linejoin:round"
      id="path5-6"
-     cx="5.0269847"
-     cy="8.4665003"
-     r="1.3228905" />
+     cx="5.2177081"
+     cy="8.7310781"
+     r="1.1321671" />
   <circle
-     style="fill:#53536c;stroke-width:0.220482;stroke-linecap:round;stroke-linejoin:round"
+     style="fill:#6f6f91;stroke-width:0.188695;stroke-linecap:round;stroke-linejoin:round"
      id="path5-6-5"
-     cx="5.0269847"
-     cy="12.170594"
-     r="1.3228905" />
+     cx="5.2177081"
+     cy="12.964329"
+     r="1.1321671" />
 </svg>
