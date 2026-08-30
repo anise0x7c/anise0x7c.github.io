@@ -34,17 +34,14 @@ const {
       padding-inline: 0.5rem;
     }
     /* Rise 10dvh into the sticky banner band by default; bottom spacing
-       belongs to the Footer. */
-    margin-top: calc(var(--banner-h) - 10dvh);
+       belongs to the Footer. Consumes --banner-h-effective (not the plain
+       --banner-h) so the taller home banner pushes content down in *layout*:
+       offsetting with `translate` instead would shift only the pixels, main's
+       flow box would end early and swallow the Footer's margin-top gap. */
+    margin-top: calc(var(--banner-h-effective) - 10dvh);
     /* Glide with the (taller, desktop) home banner on navigation — inert on
-       regular pages, where translate never changes. */
-    transition: translate 0.4s var(--ease-enter);
-  }
-
-  @media (min-width: 64rem) {
-    body.is-home .page-container {
-      translate: 0 calc(var(--banner-h-home) - var(--banner-h));
-    }
+       regular pages, where the margin never changes. */
+    transition: margin-top 0.4s var(--ease-enter);
   }
 
   @media (prefers-reduced-motion: reduce) {

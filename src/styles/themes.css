@@ -202,9 +202,6 @@
   --sh-float:
     0 20px 35px color-mix(in srgb, var(--text) 20%, transparent),
     0 8px 16px color-mix(in srgb, var(--text) 30%, transparent);
-  --sh-lqdglass:
-    inset 0 5px 20px rgba(255, 255, 255, 0.5),
-    inset 0 -15px 30px rgba(255, 255, 255, 0.54);
 }
 
 /* Dark theme — Catppuccin Mocha, same oklch(var(--hue)) system (no --hue
@@ -262,9 +259,6 @@
   --sh-float:
     0 20px 35px color-mix(in srgb, var(--crust) 70%, transparent),
     0 8px 16px color-mix(in srgb, var(--crust) 90%, transparent);
-  --sh-lqdglass:
-    inset 0 5px 20px rgba(255, 255, 255, 0.08),
-    inset 0 -15px 30px rgba(255, 255, 255, 0.1);
 
   color-scheme: dark;
 }

@@ -17,7 +17,7 @@ const { title, description, pubDate, tags, cover, draft } = post.data;
 >
   {cover && (
     <div class="cover" aria-hidden="true">
-      <Image src={cover} alt="" width={640} height={360} class="cover-img" />
+      <Image src={cover} alt="" width={640} height={360} class="cover-img" loading="eager"/>
     </div>
   )}
   {cover && <div class="cover-scrim" aria-hidden="true"></div>}

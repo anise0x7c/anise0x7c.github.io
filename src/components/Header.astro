@@ -2,32 +2,20 @@
 import { SITE, NAV_LINKS } from "../consts";
 import ThemedButton from "./ThemedButton.astro";
 import SearchOverlay from "./SearchOverlay.svelte";
+import HeaderNav from "./HeaderNav.svelte";
 
 import SearchIcon from "../assets/icons/search.svg";
-
-const pathname = Astro.url.pathname;
-function isActive(href: string): boolean {
-  if (href === "/") return pathname === "/";
-  return pathname === href || pathname.startsWith(href + "/");
-}
 ---
 
 <header class="site-header">
   <div class="header-inner">
     <a href="/" class="site-logo">{SITE.title}</a>
 
-    <nav class="header-nav" id="header-nav">
-      {
-        NAV_LINKS.map((link) => (
-          <a
-            href={link.href}
-            class:list={["nav-link", isActive(link.href) && "active"]}
-          >
-            {link.label}
-          </a>
-        ))
-      }
-    </nav>
+    <!-- Nav island: owns the active-link highlight and the mobile dropdown
+         panel (open state, focus management, dismissals). SSR'd, so the
+         links are in the HTML before hydration; client:load keeps the
+         hamburger responsive from the earliest possible tap. -->
+    <HeaderNav client:load links={NAV_LINKS} initialPath={Astro.url.pathname} />
 
     <div class="header-tools">  
       <ThemedButton
@@ -157,89 +145,8 @@ function isActive(href: string): boolean {
   };
   setupThemeToggle();
 
-  // Mobile nav disclosure (≤40rem): toggle + panel live in the persistent
-  // header outside swup's swap container, so bind once, like above. The
-  // open state is mirrored on .site-header[data-nav-open] which drives the
-  // CSS (panel visibility + menu/close icon swap).
-  const headerEl = document.querySelector(".site-header");
-  const navToggle =
-    document.querySelector<HTMLButtonElement>("[data-nav-toggle]");
-  const navPanel = document.querySelector(".header-nav");
-
-  const setMobileNav = (open: boolean, moveFocus = true) => {
-    const wasOpen = headerEl?.hasAttribute("data-nav-open") ?? false;
-    headerEl?.toggleAttribute("data-nav-open", open);
-    navToggle?.setAttribute("aria-expanded", String(open));
-    if (!moveFocus) return;
-    if (open && !wasOpen) {
-      // Opening: hand focus to the first link so Tab flows through the
-      // panel in DOM order (the panel sits before .header-tools).
-      navPanel?.querySelector<HTMLAnchorElement>("a")?.focus();
-    } else if (!open && wasOpen) {
-      // Closing: return focus to the toggle, but only when focus was
-      // parked inside the panel (Escape / outside click / link click) —
-      // resize and scroll dismissals must not steal focus.
-      if (navPanel?.contains(document.activeElement)) {
-        navToggle?.focus();
-      }
-    }
-  };
-
-  navToggle?.addEventListener("click", () => {
-    setMobileNav(!headerEl?.hasAttribute("data-nav-open"));
-  });
-
-  // Choosing a destination closes the panel — the header persists across
-  // swup navigations, so it would otherwise stay open on the next page.
-  document.querySelector(".header-nav")?.addEventListener("click", (event) => {
-    if (event.target instanceof Element && event.target.closest("a")) {
-      setMobileNav(false);
-    }
-  });
-
-  // Taps outside the header and Escape both dismiss it.
-  document.addEventListener("click", (event) => {
-    if (
-      headerEl?.hasAttribute("data-nav-open") &&
-      event.target instanceof Node &&
-      !headerEl.contains(event.target)
-    ) {
-      setMobileNav(false);
-    }
-  });
-  document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape") setMobileNav(false);
-  });
-
-  // Reset when the viewport grows past the mobile breakpoint (matches the
-  // max-width: 40rem media query) or after any swup swap. Both are
-  // programmatic dismissals — never steal focus back to the toggle.
-  window
-    .matchMedia("(min-width: 40rem)")
-    .addEventListener("change", (e) => {
-      if (e.matches) setMobileNav(false, false);
-    });
-  document.addEventListener("astro:after-swap", () => setMobileNav(false, false));
-
-  // Sync the active nav link on swup navigations: the header persists
-  // outside the swap container (<main>), so the SSR-rendered `active` class
-  // would otherwise stay frozen on the page of the initial full load.
-  // Mirrors the frontmatter isActive() logic exactly.
-  const updateNavActive = () => {
-    const pathname = location.pathname;
-    document
-      .querySelectorAll<HTMLAnchorElement>(".header-nav a[href]")
-      .forEach((link) => {
-        const href = link.getAttribute("href") ?? "";
-        const active =
-          href === "/"
-            ? pathname === "/"
-            : pathname === href || pathname.startsWith(href + "/");
-        link.classList.toggle("active", active);
-      });
-  };
-  updateNavActive();
-  document.addEventListener("astro:after-swap", updateNavActive);
+  // The mobile nav disclosure (toggle + panel + active-link sync) is owned
+  // by the HeaderNav island; nothing nav-related to wire up here.
 
   // Hide-on-scroll: the listener is bound to `window` once; the header
   // element is re-queried every frame to avoid holding a stale reference.
@@ -258,9 +165,10 @@ function isActive(href: string): boolean {
     } else if (y > headerLastY + HEADER_DEADZONE) {
       header.setAttribute("data-hidden", "");
       // The dropdown panel is anchored to the header — dismiss it along
-      // with the header so it can't float over the page ownerless. Not a
-      // user-initiated close, so don't move focus.
-      setMobileNav(false, false);
+      // with the header so it can't float over the page ownerless. The
+      // HeaderNav island listens for this and closes statelessly (no
+      // focus moves on programmatic dismissals).
+      document.dispatchEvent(new CustomEvent("mobile-nav:close"));
     }
     headerLastY = y;
   };
@@ -316,14 +224,12 @@ function isActive(href: string): boolean {
     .site-header {
       transition: none;
     }
-
-    .site-header .header-nav {
-      transition: none;
-    }
   }
 
   .header-inner {
     background-color: color-mix(in srgb, var(--color-base) 70%, transparent);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
     position: relative;
     z-index: 0;
     display: flex;
@@ -336,22 +242,11 @@ function isActive(href: string): boolean {
     transition: box-shadow 0.4s var(--ease-spring);
   }
 
-
-  .header-inner::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    border-radius: inherit;
-    backdrop-filter: blur(5px);
-    -webkit-backdrop-filter: blur(5px);
-  }
-
   @media (hover: hover) {
     .header-inner:hover {
       box-shadow:
-        inset 5px 5px 20px rgba(255, 255, 255, 0.1),
-        inset -5px -5px 30px rgba(255, 255, 255, 0.2);
+        var(--shadow-sticky),
+        inset 0 0 20px var(--color-overlay0);
     }
   }
 
@@ -367,35 +262,12 @@ function isActive(href: string): boolean {
     margin: 0 auto 0 0;
   }
 
-  .header-nav {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-
   .header-tools {
     display: flex;
     align-items: center;
     gap: 0.5rem;
     /* Tripartite desktop layout: pins the tools to the pill's right edge */
     margin-left: auto;
-  }
-
-  .nav-link {
-    padding: 0.4rem 0.8rem;
-    border-radius: var(--radius-pill);
-    font-size: 0.92rem;
-    color: var(--color-text);
-  }
-
-  @media (hover: hover) {
-    .nav-link:hover {
-      background-color: color-mix(in srgb, var(--color-overlay2) 70%, transparent);
-    }
-  }
-
-  .nav-link.active{
-    text-decoration: underline;
   }
 
   /* --- 汉堡按钮(仅移动端)与菜单/关闭图标切换 --- */
@@ -405,15 +277,17 @@ function isActive(href: string): boolean {
     display: none;
   }
 
-  .site-header[data-nav-open] .icon-menu {
+  /* The open state is mirrored by the HeaderNav island onto the toggle's
+     aria-expanded (no [data-nav-open] attribute on the header anymore). */
+  .nav-toggle[aria-expanded="true"] .icon-menu {
     display: none;
   }
 
-  .site-header[data-nav-open] .icon-close {
+  .nav-toggle[aria-expanded="true"] .icon-close {
     display: block;
   }
 
-  /* --- 移动端 (≤40rem):单行布局 + 导航下拉面板 --- */
+  /* --- 移动端 (≤40rem):单行布局(下拉面板样式在 HeaderNav 岛屿内) --- */
 
   @media (max-width: 40rem) {
     .header-inner {
@@ -441,62 +315,6 @@ function isActive(href: string): boolean {
 
     .nav-toggle {
       display: inline-flex;
-    }
-
-    /* 导航复用为下拉面板:右对齐锚定在药丸下方,宽度随内容收缩。
-       可见性用 visibility 而非 display:none —— 面板始终渲染,进出动画
-       不依赖 transition-behavior: allow-discrete(display 过渡在部分
-       浏览器/Safari 实现有缺陷:退出时 display:none 立即生效,会掐断
-       opacity/translate 的过渡,菜单瞬间消失)。visibility 是离散可过渡
-       属性,任何浏览器都能配合 opacity/translate 做完整的进出动画。
-       translate 基态 -1rem = 进入起点 / 退出终点(弹出距离,进出对称)。 */
-    .header-nav {
-      position: absolute;
-      top: calc(100% + 0.5rem);
-      right: 0;
-      min-width: 8rem;
-      display: flex;
-      flex-direction: column;
-      align-items: stretch;
-      gap: 0.25rem;
-      padding: 0.375rem;
-      background-color: color-mix(in srgb, var(--color-base) 70%, transparent);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      border-radius: var(--radius-xl);
-      box-shadow: var(--shadow-card);
-      /* Cap the panel to the viewport (future-proof for more links); the
-         header itself is max 3.25rem + margins, hence the 6rem budget. */
-      max-height: calc(100dvh - 6rem);
-      overflow-y: auto;
-      visibility: hidden;
-      pointer-events: none;
-      opacity: 0;
-      translate: 0 -1rem;
-      /* 退出:opacity/translate 立即过渡,visibility 延迟 0.4s 到动画
-         结束后才隐藏 —— 退出因此有完整的淡出+上滑 */
-      transition:
-        opacity 0.4s var(--ease-spring),
-        translate 0.4s var(--ease-spring),
-        visibility 0s linear 0.4s;
-    }
-
-    .site-header[data-nav-open] .header-nav {
-      visibility: visible;
-      pointer-events: auto;
-      opacity: 1;
-      translate: 0 0;
-      /* 进入:visibility 零延迟立即可见(opacity 才有起点可过渡),
-         opacity/translate 走同一个 0.4s ease-spring */
-      transition:
-        opacity 0.4s var(--ease-spring),
-        translate 0.4s var(--ease-spring),
-        visibility 0s;
-    }
-
-    .nav-link {
-      padding: 0.6rem 1rem;
-      text-align: center;
     }
   }
 
