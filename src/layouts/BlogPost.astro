@@ -130,6 +130,8 @@ const tocItems = headings.filter((h) => h.depth >= 2 && h.depth <= 3);
     line-height: 1.15;
     letter-spacing: -0.02em;
     margin: 0.75rem 0 0;
+    /* Break unbreakable tokens (long URLs etc.) instead of overflowing */
+    overflow-wrap: anywhere;
   }
 
   .lead {
@@ -139,12 +141,17 @@ const tocItems = headings.filter((h) => h.depth >= 2 && h.depth <= 3);
     margin: 1rem 0 1.5rem;
     padding: 1rem 0 1rem;
     border-bottom: solid 2px var(--color-overlay0);
+    overflow-wrap: anywhere;
   }
 
   @media (max-width: 40rem) {
     .lead {
       font-size: 1.05rem;
     }
+  }
+
+  .chip {
+    overflow-wrap: anywhere;
   }
 
   .tags {
@@ -164,6 +171,10 @@ const tocItems = headings.filter((h) => h.depth >= 2 && h.depth <= 3);
   .prose {
     flex: 1;
     min-width: 0;
+    /* Inherited by all prose content: lets long URLs / unbroken strings wrap
+       at any point instead of overflowing on narrow screens. <pre> keeps its
+       own horizontal scroll (Shiki code sets white-space: pre). */
+    overflow-wrap: anywhere;
   }
 
   /* TOC: hidden below lg; a sticky right column of .post-grid above. It is
