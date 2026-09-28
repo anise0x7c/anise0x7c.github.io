@@ -94,6 +94,44 @@ const isHome = Astro.url.pathname === "/";
         document.documentElement.style.setProperty("--hue", String(hue));
       })();
     </script>
+
+    <!-- Favicon follows the *browser UI* colour scheme (the tab bar's own light/
+         dark), deliberately independent of the site theme (html.dark) and of the
+         reader's stored preference — a dark tab bar wants the light-panel glyph
+         regardless of what the page itself is doing.
+
+         Why script and not pure CSS/markup: the two declarative options are not
+         portable. `media="(prefers-color-scheme: …)"` on <link rel="icon"> is
+         not honoured for icon selection in Chromium, and a prefers-color-scheme
+         query *inside* the SVG is not honoured by WebKit (svg favicons don't
+         respect media query overrides — webkit.org/b/309949). `matchMedia` +
+         href swap is the one mechanism that works in Safari, Chromium and
+         Firefox alike, and it is ~10 lines with no listeners beyond the media
+         query itself.
+
+         Note there is intentionally no html.dark observer here: the favicon must
+         NOT react to the in-page theme toggle. -->
+    <script is:inline>
+      (() => {
+        const scheme = matchMedia("(prefers-color-scheme: dark)");
+        const apply = () => {
+          // Re-query each time: swup's updateHead replaces <head> nodes, so a
+          // cached reference can be detached by a client-side navigation.
+          const link = document.querySelector('link[rel="icon"]');
+          if (!link) return;
+          const next = scheme.matches ? "/favicon-dark.svg" : "/favicon.svg";
+          // Compare the raw attribute (.href would be absolutised) so repeated
+          // calls are no-ops.
+          if (link.getAttribute("href") !== next) {
+            link.setAttribute("href", next);
+          }
+        };
+        apply();
+        scheme.addEventListener("change", apply);
+        // swup swaps <head> on client-side navigations → re-apply afterwards.
+        document.addEventListener("astro:page-load", apply);
+      })();
+    </script>
   </head>
   <body class:list={[{ "is-home": isHome }]}>
     <!-- Site-wide banner band (fuwari-style top strip). Lives OUTSIDE swup's

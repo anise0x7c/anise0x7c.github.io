@@ -8,6 +8,14 @@ const year = new Date().getFullYear();
     <p class="copy">
       &copy; {year} {SITE.author}. Built with <a href="https://astro.build">Astro</a>.
     </p>
+    <a
+      class="credit"
+      href="https://www.pixiv.net/artworks/102421481"
+      target="_blank"
+       rel="noopener noreferrer"
+     >
+      ✨ Banner Artwork: 劇団 - 逐色
+    </a>
   </div>
 </footer>
 
@@ -28,13 +36,16 @@ const year = new Date().getFullYear();
     padding: 0 1.25rem;
   }
 
-  .copy {
+  .copy,
+  .credit {
     font-size: 0.875rem;
     color: var(--color-subtext0);
     margin: 0;
   }
 
-  .copy a {
+  /* .footer-inner 是 space-between：宽屏时声明落在右端，窄屏换行后跟随左列 */
+  .copy a,
+  .credit a {
     color: var(--color-subtext1);
     text-decoration: underline;
     text-underline-offset: 0.15em;

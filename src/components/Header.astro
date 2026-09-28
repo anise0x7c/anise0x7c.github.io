@@ -227,9 +227,6 @@ import SearchIcon from "../assets/icons/search.svg";
   }
 
   .header-inner {
-    background-color: color-mix(in srgb, var(--color-base) 70%, transparent);
-    backdrop-filter: blur(5px);
-    -webkit-backdrop-filter: blur(5px);
     position: relative;
     z-index: 0;
     display: flex;
@@ -242,12 +239,22 @@ import SearchIcon from "../assets/icons/search.svg";
     transition: box-shadow 0.4s var(--ease-spring);
   }
 
-  @media (hover: hover) {
-    .header-inner:hover {
-      box-shadow:
-        var(--shadow-sticky),
-        inset 0 0 20px var(--color-overlay0);
-    }
+  /* 模糊 + 半透明背景由 ::before 承载，而不是放在 .header-inner 自身：
+     带 backdrop-filter 的元素会形成 CSS 规范里的 "Backdrop Root"，其
+     后代元素的 backdrop-filter 只能采样该 root 内部的内容 —— 移动端
+     下拉面板（HeaderNav）是 .header-inner 的子元素，如果模糊放在
+     .header-inner 上，面板的 blur(10px) 就采样不到 root 之外的页面
+     内容，视觉上完全失效（曾实测复现）。伪元素是后代不是祖先，不会
+     构成面板的 Backdrop Root，模糊即可正常作用。 */
+  .header-inner::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    background-color: color-mix(in srgb, var(--color-base) 70%, transparent);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
   }
 
   .site-logo {
